@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartPC Hub - Hardware Recommendations</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+
+  <style>
+    /* Highlight selected purpose */
+    .purpose-option.selected {
+      background-color: #e3f2fd;
+      border: 2px solid #3498db;
+    }
+    .purpose-option {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .form-step {
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    .form-step.hidden {
+      display: none;
+    }
+    /* Simple styling for results cards */
+    #componentsList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .component-card {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: #fff;
+    }
+    #results.hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="recommendations.html" class="active"><i class="fas fa-list-ul"></i> Recommendations</a>
+      <a href="troubleshooting.html"><i class="fas fa-tools"></i> Troubleshooting</a>
+      <a href="learn.html"><i class="fas fa-graduation-cap"></i> Learn</a>
+      <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+      <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+    </nav>
+  </header>
+
+  <main class="recommendations-page">
+    <h2><i class="fas fa-list-ul"></i> Hardware Recommendations</h2>
+
+    <div class="recommendation-form">
+
+      <!-- Step 1: Purpose -->
+      <div class="form-step" id="step1">
+        <h3><i class="fas fa-arrow-right"></i> Step 1: Select Primary Purpose</h3>
+        <div class="purpose-options">
+          <div class="purpose-option" data-purpose="gaming"
+               onclick="selectPurpose(this,'gaming')">
+            <i class="fas fa-gamepad purpose-icon"></i>
+            <p>Gaming</p>
+          </div>
+          <div class="purpose-option" data-purpose="work"
+               onclick="selectPurpose(this,'work')">
+            <i class="fas fa-briefcase purpose-icon"></i>
+            <p>Work</p>
+          </div>
+          <div class="purpose-option" data-purpose="creation"
+               onclick="selectPurpose(this,'creation')">
+            <i class="fas fa-film purpose-icon"></i>
+            <span style="display: block; text-align: center;">
+              Content<br>Creation
+            </span>
+          </div>
+        </div>
+        <button class="btn next-btn" onclick="nextStep(1)" disabled>
+          <i class="fas fa-arrow-right"></i> Next
+        </button>
+      </div>
+
+      <!-- Step 2: Budget -->
+      <div class="form-step hidden" id="step2">
+        <h3><i class="fas fa-arrow-right"></i> Step 2: Set Your Budget</h3>
+        <input
+          type="number"
+          id="budgetInput"
+          placeholder="Enter your total budget"
+          required
+          style="width:100%; padding:0.5rem; font-size:1rem;"
+        >
+        <div style="margin-top:1rem">
+          <button class="btn next-btn" onclick="nextStep(2)">
+            <i class="fas fa-arrow-right"></i> Next
+          </button>
+          <button class="btn" onclick="prevStep(2)">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Preferences -->
+      <div class="form-step hidden" id="step3">
+        <h3><i class="fas fa-arrow-right"></i> Step 3: Adjust Preferences</h3>
+        <div style="margin:1rem 0">
+          <label>Gaming: <input type="range" id="gamingPref" min="1" max="10" value="7"></label>
+        </div>
+        <div style="margin:1rem 0">
+          <label>Work: <input type="range" id="workPref" min="1" max="10" value="5"></label>
+        </div>
+        <div style="margin:1rem 0">
+          <label>Creation: <input type="range" id="creationPref" min="1" max="10" value="6"></label>
+        </div>
+        <div style="margin-top:1rem">
+          <button class="btn next-btn" onclick="computeBuild()">
+            <i class="fas fa-check"></i> See Build
+          </button>
+          <button class="btn" onclick="prevStep(3)">
+            <i class="fas fa-arrow-left"></i> Previous
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results hidden" id="results">
+      <div id="componentsList"></div>
+      <button id="saveBuildBtn" class="btn" style="margin-top:1.5rem;">
+        <i class="fas fa-save"></i> Save This Build
+      </button>
+      <div id="saveStatus" style="margin-top:0.5rem;color:#27ae60;font-weight:500;"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 SmartPC Hub. All rights reserved.</p>
+  </footer>
+
+  <script src="js/recommendations.js"></script>
+  <script>
+    // === Store user choices ===
+    let userChoices = {
+      purpose: null,
+      budget: 1500,
+      preferences: { gaming: 7, work: 5, creation: 6 }
+    };
+
+    // === Step navigation & state ===
+    function selectPurpose(el, purpose) {
+      document.querySelectorAll('.purpose-option')
+              .forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      userChoices.purpose = purpose;
+      document.querySelector('#step1 .next-btn').disabled = false;
+    }
+
+    function nextStep(step) {
+      if (step === 1 && !userChoices.purpose) {
+        return alert('Please select the primary purpose of your PC');
+      }
+      document.querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`step${step + 1}`).classList.remove('hidden');
+    }
+
+    function prevStep(step) {
+      document.querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`step${step - 1}`).classList.remove('hidden');
+    }
+
+    // === Load CSVs (from main.js logic via PapaParse) ===
+    // ... your existing main.js will handle loadAllComponents() and computeBuild()
+
+    // === Inline handlers for budget & preferences ===
+    document.addEventListener('DOMContentLoaded', () => {
+      // Budget input
+      const budgetInput = document.getElementById('budgetInput');
+      if (budgetInput) {
+        budgetInput.addEventListener('input', function() {
+          userChoices.budget = parseFloat(this.value) || userChoices.budget;
+        });
+      }
+
+      // Preference sliders
+      ['gamingPref','workPref','creationPref'].forEach(id => {
+        const slider = document.getElementById(id);
+        if (slider) {
+          slider.addEventListener('input', function() {
+            const key = id.replace('Pref','');
+            userChoices.preferences[key] = parseInt(this.value);
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

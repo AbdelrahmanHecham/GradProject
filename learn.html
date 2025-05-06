@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPC Hub - Learning Center</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="recommendations.html"><i class="fas fa-list-ul"></i> Recommendations</a>
+        <a href="troubleshooting.html"><i class="fas fa-tools"></i> Troubleshooting</a>
+        <a href="learn.html" class="active"><i class="fas fa-graduation-cap"></i> Learn</a>
+        <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+      </nav>
+    </header>
+
+    <main class="learn-page">
+        <h2><i class="fas fa-graduation-cap"></i> Learning Center</h2>
+        <p class="subtitle">Expand your knowledge about PC hardware and software</p>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search learning resources...">
+                <button class="search-btn"><i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <div class="learn-categories">
+            <div class="category-card" onclick="location.href='#'">
+                <div class="category-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3>PC Building Basics</h3>
+                <p>Step-by-step guides to assembling your own computer</p>
+                <div class="stats">
+                    <span><i class="fas fa-book"></i> 12 Guides</span>
+                    <span><i class="fas fa-clock"></i> 3h 45m</span>
+                </div>
+            </div>
+            
+            <div class="category-card" onclick="location.href='#'">
+                <div class="category-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3>Performance Optimization</h3>
+                <p>Techniques to maximize your system's speed and efficiency</p>
+                <div class="stats">
+                    <span><i class="fas fa-book"></i> 8 Guides</span>
+                    <span><i class="fas fa-clock"></i> 2h 30m</span>
+                </div>
+            </div>
+            
+            <div class="category-card" onclick="location.href='#'">
+                <div class="category-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Security & Maintenance</h3>
+                <p>Keep your system safe and running smoothly</p>
+                <div class="stats">
+                    <span><i class="fas fa-book"></i> 6 Guides</span>
+                    <span><i class="fas fa-clock"></i> 1h 45m</span>
+                </div>
+            </div>
+            
+            <div class="category-card" onclick="location.href='#'">
+                <div class="category-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3>Hardware Deep Dives</h3>
+                <p>Detailed explanations of PC components</p>
+                <div class="stats">
+                    <span><i class="fas fa-book"></i> 15 Guides</span>
+                    <span><i class="fas fa-clock"></i> 4h 20m</span>
+                </div>
+            </div>
+            
+            <div class="category-card" onclick="location.href='#'">
+                <div class="category-icon">
+                    <i class="fab fa-windows"></i>
+                </div>
+                <h3>Operating Systems</h3>
+                <p>Master Windows, Linux, and macOS</p>
+                <div class="stats">
+                    <span><i class="fas fa-book"></i> 10 Guides</span>
+                    <span><i class="fas fa-clock"></i> 3h 15m</span>
+                </div>
+            </div>
+            
+            <div class="category-card" onclick="location.href='#'">
+                <div class="category-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3>Networking</h3>
+                <p>Setup and optimize your home network</p>
+                <div class="stats">
+                    <span><i class="fas fa-book"></i> 7 Guides</span>
+                    <span><i class="fas fa-clock"></i> 2h 10m</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="featured-guides">
+            <h3><i class="fas fa-star"></i> Featured Guides</h3>
+            
+            <div class="guides-grid">
+                <div class="guide-card">
+                    <div class="guide-thumbnail">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="guide-content">
+                        <h4>How to Choose the Right CPU</h4>
+                        <p class="guide-desc">Understand CPU specifications and make the best choice for your needs</p>
+                        <div class="guide-meta">
+                            <span><i class="fas fa-clock"></i> 25 min</span>
+                            <span><i class="fas fa-chart-bar"></i> Beginner</span>
+                        </div>
+                        <button class="guide-btn">Start Learning <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <div class="guide-thumbnail">
+                        <i class="fas fa-memory"></i>
+                    </div>
+                    <div class="guide-content">
+                        <h4>RAM Configuration Guide</h4>
+                        <p class="guide-desc">Optimize your memory for maximum performance</p>
+                        <div class="guide-meta">
+                            <span><i class="fas fa-clock"></i> 18 min</span>
+                            <span><i class="fas fa-chart-bar"></i> Intermediate</span>
+                        </div>
+                        <button class="guide-btn">Start Learning <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <div class="guide-thumbnail">
+                        <i class="fas fa-fan"></i>
+                    </div>
+                    <div class="guide-content">
+                        <h4>PC Cooling Solutions</h4>
+                        <p class="guide-desc">Keep your system cool and quiet with proper cooling</p>
+                        <div class="guide-meta">
+                            <span><i class="fas fa-clock"></i> 32 min</span>
+                            <span><i class="fas fa-chart-bar"></i> Beginner</span>
+                        </div>
+                        <button class="guide-btn">Start Learning <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 SmartPC Hub. All rights reserved.</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

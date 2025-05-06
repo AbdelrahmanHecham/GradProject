@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPC Hub - Contact Us</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="recommendations.html"><i class="fas fa-list-ul"></i> Recommendations</a>
+        <a href="troubleshooting.html"><i class="fas fa-tools"></i> Troubleshooting</a>
+        <a href="learn.html"><i class="fas fa-graduation-cap"></i> Learn</a>
+        <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+        <a href="contact.html" class="active"><i class="fas fa-envelope"></i> Contact</a>
+      </nav>
+    </header>
+
+    <main class="contact-page">
+        <div class="contact-header">
+            <h2><i class="fas fa-headset"></i> Contact Our Team</h2>
+            <p>Have questions or feedback? We're here to help!</p>
+        </div>
+
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Our Location</h3>
+                        <p>123 Tech Street<br>Digital City, PC 54321</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Phone Support</h3>
+                        <p>+1 (555) 123-4567<br>Mon-Fri: 9AM - 6PM EST</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Email Us</h3>
+                        <p>support@smartpchub.com<br>info@smartpchub.com</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Live Chat</h3>
+                        <p>Available 24/7<br>Click the chat icon below</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-container">
+                <h3><i class="fas fa-paper-plane"></i> Send Us a Message</h3>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject"><i class="fas fa-tag"></i> Subject</label>
+                        <select id="subject" name="subject" required>
+                            <option value="" disabled selected>Select a subject</option>
+                            <option value="support">Technical Support</option>
+                            <option value="feedback">Product Feedback</option>
+                            <option value="partnership">Business Partnership</option>
+                            <option value="other">Other Inquiry</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message"><i class="fas fa-comment"></i> Your Message</label>
+                        <textarea id="message" name="message" required placeholder="Type your message here..." rows="5"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="reset" class="btn secondary">
+                            <i class="fas fa-undo"></i> Clear Form
+                        </button>
+                        <button type="submit" class="btn primary">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="social-media">
+            <h3><i class="fas fa-share-alt"></i> Connect With Us</h3>
+            <div class="social-icons">
+                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-desktop"></i>
+                <span>SmartPC Hub</span>
+            </div>
+            <div class="footer-links">
+                <a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a>
+                <a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a>
+                <a href="#"><i class="fas fa-chevron-right"></i> FAQ</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 SmartPC Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-button">
+            <i class="fas fa-comments"></i>
+        </button>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Form submission handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (validateForm('contactForm')) {
+                // Simulate form submission
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                
+                // Simulate API call
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+                    alert('Thank you for your message! We will respond within 24 hours.');
+                    this.reset();
+                    
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 2000);
+                }, 1500);
+            }
+        });
+
+        // Chat widget functionality
+        document.querySelector('.chat-button').addEventListener('click', function() {
+            alert('Live chat service will open in a new window.');
+        });
+
+        // Form validation function
+        function validateForm(formId) {
+            const form = document.getElementById(formId);
+            let isValid = true;
+            
+            form.querySelectorAll('[required]').forEach(input => {
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#e74c3c';
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#ddd';
+                }
+            });
+            
+            return isValid;
+        }
+    </script>
+</body>
+</html>
