@@ -135,6 +135,21 @@ app.get('/api/builds', (req, res) => {
   );
 });
 
+// --- Delete Build Endpoint ---
+app.delete('/api/builds/:id', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ message: 'Not logged in.' });
+  const buildId = req.params.id;
+  db.run(
+    `DELETE FROM user_builds WHERE id = ? AND userId = ?`,
+    [buildId, req.session.userId],
+    function(err) {
+      if (err) return res.status(500).json({ message: 'Database error.' });
+      if (this.changes === 0) return res.status(404).json({ message: 'Build not found.' });
+      res.json({ message: 'Build deleted.' });
+    }
+  );
+});
+
 // --- Start server ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

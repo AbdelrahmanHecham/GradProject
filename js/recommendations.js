@@ -354,8 +354,34 @@ function getCategoryIcon(category) {
     return icons[category] || 'fas fa-question-circle';
 }
 
-// --- Save Build functionality ---
+// --- Restore Build functionality ---
 document.addEventListener('DOMContentLoaded', function() {
+  // Restore build if present in localStorage
+  if (window.location.search.includes('restore=1')) {
+    try {
+      const restored = JSON.parse(localStorage.getItem('restoredBuild'));
+      if (restored && typeof displayResults === 'function') {
+        // Set userChoices and show build
+        window.userChoices = window.userChoices || {};
+        window.userChoices.purpose = restored.purpose;
+        window.userChoices.budget = restored.budget;
+        window.userChoices.preferences = restored.preferences;
+        window.currentBuild = restored.build;
+        window.currentBuildTotalCost = restored.totalCost;
+        displayResults(restored.build, restored.totalCost);
+        // Optionally, scroll to results
+        setTimeout(() => {
+          document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+      }
+    } catch (e) {
+      // Ignore restore errors
+    }
+    // Clean up
+    localStorage.removeItem('restoredBuild');
+  }
+
+  // Existing Save Build logic
   const saveBtn = document.getElementById('saveBuildBtn');
   if (saveBtn) {
     saveBtn.addEventListener('click', async function() {

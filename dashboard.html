@@ -70,6 +70,8 @@
             <ul style="margin-left:1rem;">
               ${b.build.build ? Object.entries(b.build.build).map(([k,v]) => `<li><b>${k}:</b> ${v.name || v}</li>`).join('') : ''}
             </ul>
+            <button class="btn" style="margin-right:1rem;" onclick="restoreBuild(${encodeURIComponent(JSON.stringify(b.build))})"><i class='fas fa-undo'></i> Restore</button>
+            <button class="btn secondary" onclick="deleteBuild(${b.id}, this)"><i class='fas fa-trash'></i> Delete</button>
           `;
           buildsList.appendChild(div);
         });
@@ -77,6 +79,32 @@
         buildsList.innerHTML = '<p>Failed to load builds.</p>';
       }
     }
+    // Restore build: send to recommendations page (localStorage)
+    window.restoreBuild = function(buildObj) {
+      try {
+        localStorage.setItem('restoredBuild', JSON.stringify(buildObj));
+        window.location.href = 'recommendations.html?restore=1';
+      } catch (e) {
+        alert('Failed to restore build.');
+      }
+    };
+    // Delete build
+    window.deleteBuild = async function(buildId, btn) {
+      if (!confirm('Delete this build?')) return;
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/builds/${buildId}`, { method: 'DELETE' });
+        if (res.ok) {
+          btn.closest('.component-card').remove();
+        } else {
+          alert('Failed to delete build.');
+          btn.disabled = false;
+        }
+      } catch (e) {
+        alert('Failed to delete build.');
+        btn.disabled = false;
+      }
+    };
   </script>
 </body>
 </html>
