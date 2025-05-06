@@ -107,6 +107,65 @@ const componentFiles = {
         });
       }
     }
+  
+    // === Learn Page Search Functionality ===
+    if (window.location.pathname.endsWith('learn.html')) {
+      const searchInput = document.querySelector('.search-box input[type="text"]');
+      const searchButton = document.querySelector('.search-btn');
+      const allCards = Array.from(document.querySelectorAll('.category-card, .guide-card'));
+      function filterCards() {
+        const query = searchInput.value.trim().toLowerCase();
+        allCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          // Show if query is empty or the text contains the query as a substring
+          card.style.display = (!query || text.includes(query)) ? '' : 'none';
+        });
+      }
+      searchInput.addEventListener('input', filterCards);
+      if (searchButton) searchButton.addEventListener('click', filterCards);
+    }
+  
+    // === Embedded YouTube Modal Logic ---
+    if (window.location.pathname.endsWith('learn.html')) {
+      const videoModal = document.getElementById('video-modal');
+      const youtubeIframe = document.getElementById('youtube-iframe');
+      const closeBtn = document.getElementById('close-video');
+      // Listen for clicks on category cards with data-video-id
+      document.querySelectorAll('.category-card[data-video-id]').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function() {
+          const videoId = card.getAttribute('data-video-id');
+          if (videoId) {
+            youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            videoModal.style.display = 'flex';
+          }
+        });
+      });
+      // Listen for clicks on guide-btns inside guide-cards with data-video-id
+      document.querySelectorAll('.guide-card[data-video-id] .guide-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation(); // Prevent bubbling if guide-card also has click
+          const card = btn.closest('.guide-card[data-video-id]');
+          const videoId = card ? card.getAttribute('data-video-id') : null;
+          if (videoId) {
+            youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            videoModal.style.display = 'flex';
+          }
+        });
+      });
+      // Close modal logic
+      closeBtn.addEventListener('click', function() {
+        videoModal.style.display = 'none';
+        youtubeIframe.src = '';
+      });
+      // Optional: close modal when clicking outside the video box
+      videoModal.addEventListener('click', function(e) {
+        if (e.target === videoModal) {
+          videoModal.style.display = 'none';
+          youtubeIframe.src = '';
+        }
+      });
+    }
   });
   
   // === Utility functions (unchanged) ===
