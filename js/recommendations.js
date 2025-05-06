@@ -298,42 +298,203 @@ function giveFeedback(feedback) {
     resetTroubleshooting();
 }
 
-// Display recommendation results (updated to include icons)
+// Display recommendation results (updated to include icons and allow user selection)
 function displayResults(build, totalCost) {
     const resultsSection = document.getElementById('results');
     const componentsList = document.getElementById('componentsList');
-    
     componentsList.innerHTML = '';
-    
-    Object.keys(build).forEach(category => {
-        const component = build[category];
+
+    // For each category, show a dropdown for user selection
+    Object.keys(componentData).forEach(category => {
+        const items = componentData[category];
+        const selectedModel = build[category]?.model;
         const categoryIcon = getCategoryIcon(category);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'component-card';
+
+        // Label and icon
+        const label = document.createElement('label');
+        let iconHtml;
+        if (category === 'cooler' || category === 'cpu-cooler') {
+            iconHtml = `<img src="data/SS/cpu-cooler.png" alt="CPU Cooler" style="width:48px;height:48px;vertical-align:middle;margin-left:-8px;margin-right:8px;">`;
+        } else {
+            iconHtml = renderCategoryIcon(category);
+        }
+        label.innerHTML = `${iconHtml} <strong>${category.toUpperCase()}</strong>`;
+        wrapper.appendChild(label);
+
+        // Input + datalist for search and selection
+        const input = document.createElement('input');
+        input.setAttribute('list', `datalist-${category}`);
+        input.className = 'component-input';
+        input.placeholder = '🔍 Search or enter value...';
+        if (build[category]?.model) input.value = optionLabelForItem(build[category], category);
+
+        const datalist = document.createElement('datalist');
+        datalist.id = `datalist-${category}`;
         
-        const componentCard = document.createElement('div');
-        componentCard.className = 'component-card';
-        componentCard.innerHTML = `
-            <h3><i class="${categoryIcon} component-icon"></i> ${component.manufacturer} ${component.model}</h3>
-            <p><strong>Type:</strong> ${getCategoryName(category)}</p>
-            <p><strong>Price:</strong> $${component.price}</p>
-            ${component.performance ? `<p><strong>${userChoices.purpose} Performance:</strong> ${Math.round(component.performance[userChoices.purpose] * 10)}/10</p>` : ''}
-        `;
+        // Ensure unique options for all categories
+        const uniqueLabels = new Set();
+        const filteredItems = items.filter(item => {
+            const label = optionLabelForItem(item, category);
+            if (uniqueLabels.has(label)) return false;
+            uniqueLabels.add(label);
+            return true;
+        });
+        filteredItems.forEach(item => {
+            let optionLabel = optionLabelForItem(item, category);
+            const option = document.createElement('option');
+            option.value = optionLabel;
+            datalist.appendChild(option);
+        });
         
-        componentsList.appendChild(componentCard);
+        wrapper.appendChild(input);
+        wrapper.appendChild(datalist);
+
+        // Show details for the selected item
+        const details = document.createElement('div');
+        details.className = 'component-details';
+        function updateDetailsInput(val) {
+            let selected = items.find(i => val && optionLabelForItem(i, category) === val);
+            details.innerHTML = selected ?
+                `<div>Price: $${selected.price}</div>` +
+                (selected.gaming ? `<div>Gaming: ${selected.gaming}</div>` : '') +
+                (selected.work ? `<div>Work: ${selected.work}</div>` : '') +
+                (selected.creation ? `<div>Creation: ${selected.creation}</div>` : '')
+                : '<div>No details</div>';
+        }
+        function optionLabelForItem(item, category) {
+            if (category === 'gpu') {
+                let model = item.model || item.name || '';
+                let chipset = item.chipset || '';
+                let price = item.price;
+                let words = (model + ' ' + chipset)
+                    .split(/\s+/)
+                    .filter(Boolean);
+                let seen = new Set();
+                let uniqueWords = words.filter(word => {
+                    let lower = word.toLowerCase();
+                    if (seen.has(lower)) return false;
+                    seen.add(lower);
+                    return true;
+                });
+                let label = uniqueWords.join(' ');
+                return `${label} ($${price})`;
+            } else if (category === 'power-supply' || category === 'psu') {
+                let name = item.model || item.name || '';
+                let type = item.type || '';
+                let efficiency = item.efficiency || '';
+                let wattage = item.wattage || '';
+                return `${name} ${type} ${efficiency} ${wattage}`;
+            } else if (category === 'storage' || category === 'internal-hard-drive') {
+                let name = item.model || item.name || '';
+                let capacityRaw = item.capacity || '';
+                let type = item.type || '';
+                let capacityFormatted = '';
+                if (/^\d+$/.test(capacityRaw)) {
+                    if (capacityRaw.length === 4) {
+                        capacityFormatted = capacityRaw[0] + 'Tb';
+                    } else {
+                        capacityFormatted = capacityRaw + 'Gb';
+                    }
+                } else {
+                    capacityFormatted = capacityRaw;
+                }
+                return `${name} ${capacityFormatted} ${type}`;
+            } else if (category === 'ram' || category === 'memory') {
+                let name = item.model || item.name || '';
+                let modules = item.modules || '';
+                let speed = item.speed || '';
+                let speedShort = speed.slice(-4);
+                let modulesFormatted = modules.replace(',', 'x');
+                return `${name} (${modulesFormatted}) ${speedShort}MHz`;
+            } else {
+                return `${item.model} ($${item.price})`;
+            }
+        }
+        input.addEventListener('input', function() {
+            updateDetailsInput(input.value);
+            // Update build and summary if a valid option is selected
+            let selected = items.find(i => optionLabelForItem(i, category) === input.value);
+            if (selected) {
+                build[category] = selected;
+                updateSummary();
+            }
+        });
+        updateDetailsInput(input.value);
+        wrapper.appendChild(details);
+
+        // --- Buttons for submit/reset ---
+        const btnRow = document.createElement('div');
+        btnRow.style.display = 'flex';
+        btnRow.style.gap = '0.5rem';
+        btnRow.style.marginTop = '0.3rem';
+        
+        const submitBtn = document.createElement('button');
+        submitBtn.textContent = 'Submit';
+        submitBtn.className = 'component-btn submit-btn';
+        submitBtn.type = 'button';
+        
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.className = 'component-btn reset-btn';
+        resetBtn.type = 'button';
+        
+        btnRow.appendChild(submitBtn);
+        btnRow.appendChild(resetBtn);
+        wrapper.appendChild(btnRow);
+
+        // --- Button logic ---
+        submitBtn.addEventListener('click', function() {
+            let selected = items.find(i => optionLabelForItem(i, category) === input.value);
+            if (selected) {
+                build[category] = selected;
+                updateDetailsInput(input.value);
+                input.disabled = true;
+                submitBtn.disabled = true;
+                resetBtn.disabled = false;
+                updateSummary(); // Instantly update summary after submit
+            }
+        });
+        resetBtn.addEventListener('click', function() {
+            input.value = '';
+            details.innerHTML = '<div>No details</div>';
+            build[category] = undefined;
+            updateSummary();
+            input.disabled = false;
+            submitBtn.disabled = false;
+            resetBtn.disabled = true;
+        });
+        // Initial state: reset is disabled until submit
+        resetBtn.disabled = true;
+
+        componentsList.appendChild(wrapper);
     });
-    
-    // Add cost summary
+
+    // Build summary card
     const summaryCard = document.createElement('div');
-    summaryCard.className = 'component-card';
     summaryCard.style.gridColumn = '1 / -1';
-    summaryCard.innerHTML = `
-        <h3><i class="fas fa-clipboard-list component-icon"></i> Build Summary</h3>
-        <p><strong>Total Cost:</strong> $${totalCost}</p>
-        <p><strong>Purpose:</strong> ${getPurposeName(userChoices.purpose)}</p>
-        <p><strong>Your Budget:</strong> $${userChoices.budget}</p>
-    `;
-    
+    summaryCard.id = 'build-summary';
+    // Make build accessible to all functions
+    window.build = build;
+    function updateSummary() {
+        // Calculate total cost from current build
+        const total = getSubmittedTotalCost();
+        window.currentBuildTotalCost = total;
+        const overBudget = total > userChoices.budget;
+        summaryCard.innerHTML = `
+            <h3><i class="fas fa-clipboard-list component-icon"></i> Build Summary</h3>
+            <p><strong>Total Cost:</strong> <span id="totalCostValue" style="color:${overBudget ? '#e53935' : '#2196f3'};">$${total.toFixed(2)}</span></p>
+            <p><strong>Purpose:</strong> ${getPurposeName(userChoices.purpose)}</p>
+            <p><strong>Your Budget:</strong> $${userChoices.budget}</p>
+        `;
+        window.currentBuild = build;
+        window.currentBuildTotalCost = total;
+    }
+    updateSummary();
     componentsList.appendChild(summaryCard);
-    
+
     // Show results section and hide form
     document.querySelector('.recommendation-form').classList.add('hidden');
     resultsSection.classList.remove('hidden');
@@ -348,10 +509,50 @@ function getCategoryIcon(category) {
         storage: 'fas fa-hdd',
         motherboard: 'fas fa-microchip',
         psu: 'fas fa-plug',
-        case: 'fas fa-desktop'
+        case: 'fas fa-desktop',
+        cooler: 'fas fa-question-circle',
+        monitor: 'fas fa-desktop' // Use the same icon as case
     };
     
     return icons[category] || 'fas fa-question-circle';
+}
+
+// Helper function to render category icons
+function renderCategoryIcon(category) {
+    // Use custom image for case, move slightly left with negative margin
+    if (category === 'case') {
+        return `<img src="data/SS/PC%20Case.png" alt="PC Case" style="width:48px;height:48px;vertical-align:middle;margin-left:-8px;margin-right:8px;">`;
+    }
+    // Use custom image for motherboard, smaller and with right margin
+    if (category === 'motherboard') {
+        return `<img src="https://cdn-icons-png.flaticon.com/512/2004/2004692.png" alt="Motherboard" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;">`;
+    }
+    const iconClass = getCategoryIcon(category);
+    return `<i class="${iconClass} component-icon"></i>`;
+}
+
+// Helper function to get the display name for a purpose
+function getPurposeName(purpose) {
+    switch (purpose) {
+        case 'gaming': return 'Gaming';
+        case 'work': return 'Work';
+        case 'creation': return 'Content Creation';
+        default: return purpose || 'N/A';
+    }
+}
+
+// Helper to get total cost from only submitted components
+function getSubmittedTotalCost() {
+    // Use window.build if local build is not in scope
+    const usedBuild = typeof build !== 'undefined' ? build : window.build;
+    let sum = 0;
+    Object.keys(usedBuild).forEach(category => {
+        const el = document.querySelector(`.component-card input[list="datalist-${category}"]`);
+        if (el && el.disabled && usedBuild[category] && usedBuild[category].price) {
+            sum += parseFloat(usedBuild[category].price) || 0;
+        }
+    });
+    return sum;
 }
 
 // --- Restore Build functionality ---

@@ -29,7 +29,15 @@ const componentFiles = {
         header: true,
         skipEmptyLines: true,
         complete: ({ data }) => {
-          componentData[category] = data.filter(r => r.model && r.price);
+          // Accept both 'name', 'model', and 'productName' as model fields, and infer price from 'price' or 'memSize' if needed
+          const normalized = data.map(row => {
+            if (!row.model && row.name) row.model = row.name;
+            if (!row.model && row.productName) row.model = row.productName;
+            // Try to infer price if not present, e.g., from 'memSize' or other fields (fallback)
+            if (!row.price && row.memSize) row.price = row.memSize; // fallback, not real price
+            return row;
+          });
+          componentData[category] = normalized.filter(r => r.model && (r.price || r.price === 0));
           filesLoaded++;
           if (filesLoaded === totalFiles) {
             console.log('✅ All components loaded:', componentData);
@@ -56,29 +64,30 @@ const componentFiles = {
       const affordable = items.filter(r =>
         parseFloat(r.price) <= userChoices.budget
       );
-  
-      // Sort descending by the score matching the primary purpose
-      // (assumes your CSVs have numeric columns named exactly 'gaming','work','creation')
+
+      // Sort by the selected purpose (gaming, work, creation)
       const sorted = affordable.sort((a, b) =>
         (parseFloat(b[userChoices.purpose]) || 0)
         - (parseFloat(a[userChoices.purpose]) || 0)
       );
-  
+
       // Pick the top, or a placeholder if none matched
       const pick = sorted[0] || { model: 'No match', price: 0 };
       build[category] = pick;
-      totalCost += parseFloat(pick.price) || 0;
+      // DO NOT add to totalCost here, let displayResults handle cost based on submit buttons
     });
-  
+
     // Now hand off to your existing display logic in recommendations.html
     // (which should render `build` and `totalCost` into that #results div)
     if (typeof displayResults === 'function') {
-      displayResults(build, totalCost);
+      displayResults(build, 0); // Start with 0, let UI handle cost
     } else {
-      console.log('Build:', build, 'Total Cost:', totalCost);
+      console.log('Build:', build, 'Total Cost:', 0);
     }
   }
   
+  // Make computeBuild globally accessible for recommendations.html
+  window.computeBuild = computeBuild;
   
   document.addEventListener('DOMContentLoaded', function() {
     // 1) Activate current nav link
@@ -97,15 +106,24 @@ const componentFiles = {
     // 3) On the Recommendations page: disable the “See Build” button until CSVs load,
     //    then wire it to computeBuild()
     if (currentPage === 'recommendations.html') {
-      const finishBtn = document.querySelector('.next-btn');
-      if (finishBtn) {
-        finishBtn.disabled = true;
-        loadAllComponents(() => {
-          finishBtn.disabled = false;
-          finishBtn.textContent = 'See Build';
-          finishBtn.onclick = computeBuild;
-        });
-      }
+      const finishBtn = document.getElementById('seeBuildBtn');
+      const errorDiv = document.createElement('div');
+      errorDiv.id = 'csv-load-error';
+      errorDiv.style.color = 'red';
+      errorDiv.style.margin = '1rem 0';
+      finishBtn?.parentNode?.insertBefore(errorDiv, finishBtn.nextSibling);
+      finishBtn.disabled = true;
+      loadAllComponents(() => {
+        finishBtn.disabled = false;
+        finishBtn.textContent = 'See Build';
+        finishBtn.onclick = computeBuild;
+        errorDiv.textContent = '';
+      });
+      setTimeout(() => {
+        if (finishBtn.disabled) {
+          errorDiv.textContent = 'Error: Failed to load hardware data (CSV files). Please check your connection or contact support.';
+        }
+      }, 5000);
     }
   
     // === Learn Page Search Functionality ===

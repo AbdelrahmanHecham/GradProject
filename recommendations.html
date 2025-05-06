@@ -33,7 +33,7 @@
     /* Simple styling for results cards */
     #componentsList {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
       gap: 1rem;
       margin: 2rem 0;
     }
@@ -43,9 +43,127 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       background: #fff;
+      /* Ensure all cards are the same height */
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .component-card label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+    .component-card select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
     }
     #results.hidden {
       display: none;
+    }
+
+    .component-input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #2196f3;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #f7faff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 0.5rem;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(33,150,243,0.06);
+    }
+    .component-input:focus {
+      border-color: #1769aa;
+      box-shadow: 0 0 0 2px #bbdefb;
+      background: #fff;
+    }
+    .component-card label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+      color: #1769aa;
+    }
+    .component-card {
+      border: 1.5px solid #e3eafc;
+      padding: 1.2rem 1rem 1rem 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(33,150,243,0.06);
+      background: #fff;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .component-card:hover {
+      border-color: #2196f3;
+      box-shadow: 0 8px 24px rgba(33,150,243,0.12);
+    }
+    .component-details {
+      color: #444;
+      font-size: 0.98rem;
+      margin-top: 0.3rem;
+      background: #f0f7ff;
+      border-radius: 6px;
+      padding: 0.5rem 0.7rem;
+      min-height: 24px;
+    }
+    #componentsList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap: 1.1rem;
+      margin: 2rem 0;
+    }
+
+    .component-btn {
+      padding: 0.48rem 1.1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+      margin-right: 0.3rem;
+      box-shadow: 0 2px 8px rgba(33,150,243,0.07);
+    }
+    .component-btn.submit-btn {
+      background: linear-gradient(90deg, #2196f3 60%, #21cbf3 100%);
+      color: #fff;
+      border: 1.5px solid #2196f3;
+    }
+    .component-btn.submit-btn:disabled {
+      background: #e3eafc;
+      color: #b0b8c9;
+      border: 1.5px solid #b0b8c9;
+      cursor: not-allowed;
+    }
+    .component-btn.reset-btn {
+      background: #fff;
+      color: #2196f3;
+      border: 1.5px solid #2196f3;
+    }
+    .component-btn.reset-btn:hover:not(:disabled) {
+      background: #e3f2fd;
+    }
+    .component-btn:focus {
+      outline: 2px solid #21cbf3;
+      outline-offset: 2px;
+    }
+    .component-btn.reset-btn:disabled {
+      color: #b0b8c9;
+      border: 1.5px solid #b0b8c9;
+      background: #f7faff;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -127,7 +245,7 @@
           <label>Creation: <input type="range" id="creationPref" min="1" max="10" value="6"></label>
         </div>
         <div style="margin-top:1rem">
-          <button class="btn next-btn" onclick="computeBuild()">
+          <button class="btn next-btn" id="seeBuildBtn">
             <i class="fas fa-check"></i> See Build
           </button>
           <button class="btn" onclick="prevStep(3)">
@@ -156,6 +274,7 @@
     <p>&copy; 2024 SmartPC Hub. All rights reserved.</p>
   </footer>
 
+  <script src="js/main.js"></script>
   <script src="js/recommendations.js"></script>
   <script>
     // === Store user choices ===
@@ -209,6 +328,20 @@
             userChoices.preferences[key] = parseInt(this.value);
           });
         }
+      });
+
+      // See Build button handler
+      document.getElementById('seeBuildBtn').addEventListener('click', function(e) {
+        // Force sync all fields before running computeBuild
+        userChoices.purpose = userChoices.purpose || document.querySelector('.purpose-option.selected')?.dataset.purpose;
+        userChoices.budget = parseFloat(document.getElementById('budgetInput').value) || userChoices.budget;
+        userChoices.preferences = {
+          gaming: parseInt(document.getElementById('gamingPref').value, 10),
+          work: parseInt(document.getElementById('workPref').value, 10),
+          creation: parseInt(document.getElementById('creationPref').value, 10)
+        };
+        window.userChoices = userChoices;
+        computeBuild();
       });
     });
   </script>
