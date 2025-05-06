@@ -1,86 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartPC Hub - Troubleshooting</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartPC Hub – Troubleshooting</title>
+
+  <!-- your main stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  >
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="index.html"><i class="fas fa-home"></i> Home</a>
-            <a href="recommendations.html"><i class="fas fa-list-ul"></i> Recommendations</a>
-            <a href="troubleshooting.html" class="active"><i class="fas fa-tools"></i> Troubleshooting</a>
-            <a href="learn.html"><i class="fas fa-graduation-cap"></i> Learn</a>
-            <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
-            <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
-        </nav>
-    </header>
+  <header>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="recommendations.html"><i class="fas fa-list-ul"></i> Recommendations</a>
+      <a href="troubleshooting.html" class="active"><i class="fas fa-tools"></i> Troubleshooting</a>
+      <a href="learn.html"><i class="fas fa-graduation-cap"></i> Learn</a>
+      <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+      <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+    </nav>
+  </header>
 
-    <main class="troubleshooting-page">
-        <h2><i class="fas fa-tools"></i> Troubleshooting</h2>
-        
-        <div class="troubleshooting-options">
-            <div class="option-card" onclick="startTroubleshooting('software')">
-                <div class="icon-container">
-                    <i class="fas fa-code option-icon"></i>
-                </div>
-                <h3>Software Issues</h3>
-                <p>System errors, crashes, startup problems</p>
-            </div>
-            <div class="option-card" onclick="startTroubleshooting('performance')">
-                <div class="icon-container">
-                    <i class="fas fa-tachometer-alt option-icon"></i>
-                </div>
-                <h3>Performance Issues</h3>
-                <p>Slow system, freezing, high resource usage</p>
-            </div>
-            <div class="option-card" onclick="startTroubleshooting('hardware')">
-                <div class="icon-container">
-                    <i class="fas fa-microchip option-icon"></i>
-                </div>
-                <h3>Hardware Issues</h3>
-                <p>Noises, overheating, component failures</p>
-            </div>
-        </div>
+  <main class="troubleshooting-page">
+    <h2><i class="fas fa-search"></i> Troubleshooting Assistant</h2>
 
-        <div class="troubleshooting-flow hidden" id="troubleshootingFlow">
-            <div class="flow-header">
-                <h3 id="flowTitle"><i class="fas fa-question-circle"></i> Troubleshooting</h3>
-                <button class="btn secondary" onclick="resetTroubleshooting()">
-                    <i class="fas fa-redo"></i> Start Over
-                </button>
-            </div>
-            
-            <div class="flow-step" id="currentStep">
-                <!-- Will be filled dynamically from JavaScript -->
-            </div>
-        </div>
+    <div class="search-box" style="max-width:600px; margin:1rem auto;">
+      <input
+        type="text"
+        id="error-search"
+        placeholder="Enter error code or symptom…"
+        style="width:100%; padding:0.5rem; font-size:1rem;"
+      >
+    </div>
 
-        <div class="solutions hidden" id="solutions">
-            <h3><i class="fas fa-check-circle"></i> Recommended Solutions</h3>
-            <div class="solutions-list" id="solutionsList">
-                <!-- Will be filled with solutions from JavaScript -->
-            </div>
-            <div class="solution-feedback">
-                <p>Were these solutions helpful?</p>
-                <button class="btn" onclick="giveFeedback('yes')">
-                    <i class="fas fa-thumbs-up"></i> Yes
-                </button>
-                <button class="btn secondary" onclick="giveFeedback('no')">
-                    <i class="fas fa-thumbs-down"></i> No
-                </button>
-            </div>
-        </div>
-    </main>
+    <div id="troubleshoot-results" style="max-width:800px; margin:1rem auto;">
+      <!-- Matched solutions will be injected here -->
+    </div>
+  </main>
 
-    <footer>
-        <p>&copy; 2024 SmartPC Hub. All rights reserved.</p>
-    </footer>
+  <footer>
+    <p>&copy; 2024 SmartPC Hub. All rights reserved.</p>
+  </footer>
 
-    <script src="js/troubleshooting.js"></script>
+  <!-- dynamic troubleshooting logic -->
+  <script src="js/troubleshoot.js"></script>
 </body>
 </html>

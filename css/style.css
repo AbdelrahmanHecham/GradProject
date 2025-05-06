@@ -1654,3 +1654,13 @@ footer {
     letter-spacing: 0.5px;
     text-shadow: 1px 1px 2px #e0f7fa;
 }
+
+/* ─── Troubleshooting page overrides ─── */
+.troubleshooting-page .search-box input {
+    border: 2px solid #3498db;
+    border-radius: 4px;
+  }
+  .troubleshooting-page .error-card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  

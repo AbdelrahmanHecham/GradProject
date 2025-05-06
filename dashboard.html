@@ -4,107 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard – SMARTPC HUB</title>
+
+  <!-- your main stylesheet -->
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Font Awesome for icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
 </head>
 <body class="auth-page">
   <nav class="auth-nav">
     <a href="index.html">Home</a>
+    <a href="recommendations.html">Recommendations</a>
     <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
   </nav>
+
   <main class="auth-card" id="dashboard-main">
     <h1 id="welcome">Loading...</h1>
-    <button id="logout-btn" class="btn" style="margin-top:1.5rem;">Sign Out</button>
     <h2 style="margin-top:2rem;">Your Saved Builds</h2>
     <div id="buildsList" style="margin-top:1.5rem;"></div>
   </main>
+
   <script>
-    fetch('/api/me')
-      .then(res => {
-        if (res.ok) return res.json();
-        throw new Error('Not logged in');
-      })
-      .then(user => {
-        document.getElementById('welcome').textContent = `Welcome, ${user.username}!`;
-        localStorage.setItem('username', user.username);
-        loadBuilds();
-      })
-      .catch(() => {
-        const username = localStorage.getItem('username');
-        if (username) {
-          document.getElementById('welcome').textContent = `Welcome, ${username}!`;
-        } else {
-          document.getElementById('welcome').textContent = 'Please log in to view your dashboard.';
-        }
+  // 1) Fetch current user
+  fetch('/api/me')
+    .then(res => {
+      if (res.ok) return res.json();
+      throw new Error('Not logged in');
+    })
+    .then(user => {
+      document.getElementById('welcome').textContent = `Welcome, ${user.username}!`;
+      loadBuilds();
+    })
+    .catch(() => {
+      document.getElementById('welcome').textContent = 'Please log in to view your dashboard.';
+    });
+
+  // 2) Sign-out
+  document.getElementById('logout-btn').onclick = async function(e) {
+    e.preventDefault();
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = 'login.html';
+  };
+
+  // 3) Load saved builds
+  async function loadBuilds() {
+    const buildsList = document.getElementById('buildsList');
+    buildsList.innerHTML = 'Loading builds...';
+    try {
+      const res = await fetch('/api/builds');
+      if (!res.ok) throw new Error('Not authenticated');
+      const { builds } = await res.json();
+      if (builds.length === 0) {
+        buildsList.innerHTML = '<p>No builds saved yet.</p>';
+        return;
+      }
+      buildsList.innerHTML = '';  // clear loading text
+
+      builds.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'component-card';
+        div.style.marginBottom = '1rem';
+        // Build details list
+        const details = Object.entries(b.build)
+          .map(([key, val]) => {
+            // val may be an object (component) or primitive
+            const display = (typeof val === 'object' && val !== null)
+              ? (val.name || JSON.stringify(val))
+              : val;
+            return `<li><b>${key}:</b> ${display}</li>`;
+          }).join('');
+
+        div.innerHTML = `
+          <strong>Saved:</strong> ${new Date(b.savedAt).toLocaleString()}<br>
+          <ul style="margin:0.5rem 0 1rem 1rem; padding:0;">
+            ${details}
+          </ul>
+          <button class="btn" style="margin-right:1rem;"
+            onclick='restoreBuild(${JSON.stringify(b.build)})'>
+            <i class="fas fa-undo"></i> Restore
+          </button>
+          <button class="btn secondary" onclick="deleteBuild(${b.id}, this)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        `;
+        buildsList.appendChild(div);
       });
-    // Sign out button clears localStorage and logs out
-    document.getElementById('logout-btn').onclick = async function(e) {
-      e.preventDefault();
-      await fetch('/api/logout', { method: 'POST' });
-      localStorage.removeItem('isAuthenticated');
-      localStorage.removeItem('username');
-      window.location.href = 'login.html';
-    };
-    // Load builds
-    async function loadBuilds() {
-      const buildsList = document.getElementById('buildsList');
-      buildsList.innerHTML = 'Loading builds...';
-      try {
-        const res = await fetch('/api/builds');
-        if (!res.ok) throw new Error('Not logged in');
-        const data = await res.json();
-        if (!data.builds || data.builds.length === 0) {
-          buildsList.innerHTML = '<p>No builds saved yet.</p>';
-          return;
-        }
-        buildsList.innerHTML = '';
-        data.builds.forEach(b => {
-          const div = document.createElement('div');
-          div.className = 'component-card';
-          div.style.marginBottom = '1rem';
-          div.innerHTML = `
-            <strong>Saved:</strong> ${new Date(b.savedAt).toLocaleString()}<br>
-            <strong>Purpose:</strong> ${b.build.purpose || ''}<br>
-            <strong>Budget:</strong> $${b.build.budget || ''}<br>
-            <strong>Total Cost:</strong> $${b.build.totalCost || ''}<br>
-            <strong>Components:</strong>
-            <ul style="margin-left:1rem;">
-              ${b.build.build ? Object.entries(b.build.build).map(([k,v]) => `<li><b>${k}:</b> ${v.name || v}</li>`).join('') : ''}
-            </ul>
-            <button class="btn" style="margin-right:1rem;" onclick="restoreBuild(${encodeURIComponent(JSON.stringify(b.build))})"><i class='fas fa-undo'></i> Restore</button>
-            <button class="btn secondary" onclick="deleteBuild(${b.id}, this)"><i class='fas fa-trash'></i> Delete</button>
-          `;
-          buildsList.appendChild(div);
-        });
-      } catch (e) {
-        buildsList.innerHTML = '<p>Failed to load builds.</p>';
-      }
+    } catch {
+      buildsList.innerHTML = '<p>Failed to load builds. Please log in.</p>';
     }
-    // Restore build: send to recommendations page (localStorage)
-    window.restoreBuild = function(buildObj) {
-      try {
-        localStorage.setItem('restoredBuild', JSON.stringify(buildObj));
-        window.location.href = 'recommendations.html?restore=1';
-      } catch (e) {
-        alert('Failed to restore build.');
-      }
-    };
-    // Delete build
-    window.deleteBuild = async function(buildId, btn) {
-      if (!confirm('Delete this build?')) return;
-      btn.disabled = true;
-      try {
-        const res = await fetch(`/api/builds/${buildId}`, { method: 'DELETE' });
-        if (res.ok) {
-          btn.closest('.component-card').remove();
-        } else {
-          alert('Failed to delete build.');
-          btn.disabled = false;
-        }
-      } catch (e) {
-        alert('Failed to delete build.');
-        btn.disabled = false;
-      }
-    };
+  }
+
+  // 4) Restore build: store in localStorage & redirect
+  function restoreBuild(buildObj) {
+    localStorage.setItem('restoredBuild', JSON.stringify(buildObj));
+    window.location.href = 'recommendations.html?restore=1';
+  }
+
+  // 5) Delete build
+  async function deleteBuild(buildId, btn) {
+    if (!confirm('Delete this build?')) return;
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/api/builds/${buildId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      btn.closest('.component-card').remove();
+    } catch {
+      alert('Failed to delete build.');
+      btn.disabled = false;
+    }
+  }
   </script>
 </body>
 </html>

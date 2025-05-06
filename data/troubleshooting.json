@@ -1,0 +1,272 @@
+[
+  {
+    "code": "APP_CRASH_STARTUP",
+    "title": "Application Crash on Startup",
+    "symptom": "Crashes immediately when launching",
+    "solution": "Reinstall the Visual C++ Redistributable for Visual Studio 2019, update your graphics drivers, and run the application as Administrator."
+  },
+  {
+    "code": "DLL_NOT_FOUND",
+    "title": "Missing DLL File",
+    "symptom": "Error message saying a .dll file is missing",
+    "solution": "Download the missing DLL from the official software vendor or reinstall the associated application to restore the file."
+  },
+  {
+    "code": "BSOD_KMODE_EXCEPTION",
+    "title": "Blue Screen: KMODE_EXCEPTION_NOT_HANDLED",
+    "symptom": "BSOD stop code 0x0000001E",
+    "solution": "Update or rollback recently installed drivers, run `sfc /scannow` in an elevated Command Prompt, and check for faulty RAM."
+  },
+  {
+    "code": "BSOD_IRQL_NOT_LESS",
+    "title": "Blue Screen: IRQL_NOT_LESS_OR_EQUAL",
+    "symptom": "BSOD stop code 0x0000000A",
+    "solution": "Uninstall any new hardware drivers, update the network and storage controllers, and test memory modules with MemTest86."
+  },
+  {
+    "code": "BSOD_PAGE_FAULT",
+    "title": "Blue Screen: PAGE_FAULT_IN_NONPAGED_AREA",
+    "symptom": "BSOD stop code 0x00000050",
+    "solution": "Disconnect external drives, run a disk check (`chkdsk /f /r`), and reseat or replace RAM sticks."
+  },
+  {
+    "code": "GPU_OVERHEAT",
+    "title": "GPU Overheating",
+    "symptom": "System shuts down or artifacts appear under load",
+    "solution": "Clean GPU heatsink and fans, increase case airflow, and update to the latest GPU driver from the manufacturer."
+  },
+  {
+    "code": "CPU_OVERHEAT",
+    "title": "CPU Overheating",
+    "symptom": "System throttles performance or shuts down",
+    "solution": "Reapply CPU thermal paste, ensure cooler is properly seated, and verify CPU fan is spinning at correct RPM."
+  },
+  {
+    "code": "NO_BOOT_DEVICE",
+    "title": "No Boot Device Found",
+    "symptom": "Error: No bootable device installed",
+    "solution": "Check BIOS/UEFI boot order, ensure your primary drive is detected, and replug SATA/NVMe cables."
+  },
+  {
+    "code": "NO_VIDEO_OUTPUT",
+    "title": "No Video Output",
+    "symptom": "Monitor stays blank after power-on",
+    "solution": "Reseat GPU in PCIe slot, test with motherboard video-out if available, and verify monitor cable integrity."
+  },
+  {
+    "code": "NO_POST_BEEP",
+    "title": "No POST & Beep Codes",
+    "symptom": "Motherboard LEDs on but no beeps or display",
+    "solution": "Check speaker/jumper on motherboard, remove all non-essential hardware, and reseat RAM and GPU."
+  },
+  {
+    "code": "RAM_MEMORY_ERROR",
+    "title": "Memory Error Detected",
+    "symptom": "Random reboots, application crashes, or beep codes",
+    "solution": "Run MemTest86 for several passes, test RAM modules individually, and replace any failing sticks."
+  },
+  {
+    "code": "HDD_NOT_DETECTED",
+    "title": "Hard Drive Not Detected",
+    "symptom": "Drive missing in BIOS or OS",
+    "solution": "Verify power and data cables, test drive on another SATA port or in another PC, and check drive health with SMART tools."
+  },
+  {
+    "code": "SSD_SLOW",
+    "title": "SSD Very Slow Performance",
+    "symptom": "Long load times, low read/write rates",
+    "solution": "Enable TRIM (`fsutil behavior query DisableDeleteNotify`), update SSD firmware, and ensure AHCI mode is enabled in BIOS."
+  },
+  {
+    "code": "USB_NOT_RECOGNIZED",
+    "title": "USB Device Not Recognized",
+    "symptom": "Windows shows 'Unknown USB Device'",
+    "solution": "Try different USB ports, uninstall and reinstall USB controllers in Device Manager, and test device on another computer."
+  },
+  {
+    "code": "HIGH_CPU_USAGE",
+    "title": "High CPU Usage",
+    "symptom": "CPU at or near 100% during idle or light tasks",
+    "solution": "Open Task Manager to identify culprit process, update or uninstall problematic software, and scan for malware."
+  },
+  {
+    "code": "HIGH_RAM_USAGE",
+    "title": "High Memory Usage",
+    "symptom": "System runs out of RAM and uses pagefile excessively",
+    "solution": "Close memory-hungry applications, add more physical RAM, and check for memory leaks in background services."
+  },
+  {
+    "code": "NETWORK_DISCONNECT",
+    "title": "Ethernet Disconnects Randomly",
+    "symptom": "Loss of network connectivity over LAN",
+    "solution": "Update network adapter drivers, replace Ethernet cable, and test on a different switch or router port."
+  },
+  {
+    "code": "WIFI_NO_INTERNET",
+    "title": "Wi-Fi Connected But No Internet",
+    "symptom": "Connected to SSID but no web access",
+    "solution": "Forget/re-add network, reboot router, and update wireless adapter drivers."
+  },
+  {
+    "code": "WINDOWS_UPDATE_FAIL",
+    "title": "Windows Update Failure",
+    "symptom": "Error codes like 0x80070057 during update",
+    "solution": "Run Windows Update Troubleshooter, reset update components (`net stop wuauserv` etc.), and clear `SoftwareDistribution` folder."
+  },
+  {
+    "code": "ERROR_0x80070057",
+    "title": "Parameter Is Incorrect",
+    "symptom": "Error 0x80070057 in various Windows operations",
+    "solution": "Run `DISM /Online /Cleanup-Image /RestoreHealth`, then `sfc /scannow`, and retry the operation."
+  },
+  {
+    "code": "DIRECTX_UNSUPPORTED",
+    "title": "DirectX Feature Level Not Supported",
+    "symptom": "Game/graphics app fails with DirectX error",
+    "solution": "Install the latest DirectX runtime from Microsoft, update GPU drivers, and ensure OS is up to date."
+  },
+  {
+    "code": "AUDIO_NO_SOUND",
+    "title": "No Audio Output",
+    "symptom": "Speakers/headphones silent",
+    "solution": "Check default playback device in Sound settings, update Realtek or audio chipset drivers, and verify cable connections."
+  },
+  {
+    "code": "MIC_NOT_WORK",
+    "title": "Microphone Not Working",
+    "symptom": "No input in recording software",
+    "solution": "Enable microphone in Privacy settings, set it as default device, update drivers, and test on another port or PC."
+  },
+  {
+    "code": "KEYBOARD_NOT_RESPOND",
+    "title": "Keyboard Unresponsive",
+    "symptom": "Keystrokes not registering",
+    "solution": "Test with another keyboard, reboot the PC, update keyboard drivers, and check BIOS USB legacy support."
+  },
+  {
+    "code": "PRINTER_OFFLINE",
+    "title": "Printer Showing Offline",
+    "symptom": "Cannot print; printer status is Offline",
+    "solution": "Restart the print spooler service (`services.msc`), reconnect USB/network cable, and reinstall printer drivers."
+  },
+  {
+    "code": "KERNEL_SECURITY_CHECK_FAILURE",
+    "title": "Blue Screen: KERNEL_SECURITY_CHECK_FAILURE",
+    "symptom": "BSOD stop code 0x00000139",
+    "solution": "Update BIOS and drivers, run `sfc /scannow`, and check for disk corruption with `chkdsk`."
+  },
+  {
+    "code": "MEMORY_MANAGEMENT",
+    "title": "Blue Screen: MEMORY_MANAGEMENT",
+    "symptom": "BSOD stop code 0x0000001A",
+    "solution": "Run MemTest86, replace faulty RAM modules, and update memory controller drivers."
+  },
+  {
+    "code": "VIDEO_TDR_FAILURE",
+    "title": "Blue Screen: VIDEO_TDR_FAILURE",
+    "symptom": "Display driver stopped responding and was recovered",
+    "solution": "Reinstall GPU drivers, lower GPU overclock, and ensure proper power delivery to the graphics card."
+  },
+  {
+    "code": "CRITICAL_PROCESS_DIED",
+    "title": "Blue Screen: CRITICAL_PROCESS_DIED",
+    "symptom": "BSOD stop code 0x000000EF",
+    "solution": "Check for corrupted system files (`sfc /scannow`), rollback recent updates, and run DISM repair."
+  },
+  {
+    "code": "SYSTEM_SERVICE_EXCEPTION",
+    "title": "Blue Screen: SYSTEM_SERVICE_EXCEPTION",
+    "symptom": "BSOD stop code 0x0000003B",
+    "solution": "Update or uninstall recently installed drivers, scan for malware, and run Windows Update."
+  },
+  {
+    "code": "THREAD_STUCK_IN_DEVICE_DRIVER",
+    "title": "Blue Screen: THREAD_STUCK_IN_DEVICE_DRIVER",
+    "symptom": "BSOD indicating a graphics driver hang",
+    "solution": "Update GPU drivers, check for overheating, and rollback to a stable driver version."
+  },
+  {
+    "code": "WHEA_UNCORRECTABLE_ERROR",
+    "title": "Blue Screen: WHEA_UNCORRECTABLE_ERROR",
+    "symptom": "Hardware error detected by Windows Hardware Error Architecture",
+    "solution": "Test hardware components (CPU, RAM, motherboard), update firmware, and ensure proper cooling."
+  },
+  {
+    "code": "APC_INDEX_MISMATCH",
+    "title": "Blue Screen: APC_INDEX_MISMATCH",
+    "symptom": "BSOD stop code 0x00000001",
+    "solution": "Uninstall third-party antivirus or VPN software, and update kernel-mode drivers."
+  },
+  {
+    "code": "BAD_POOL_HEADER",
+    "title": "Blue Screen: BAD_POOL_HEADER",
+    "symptom": "BSOD stop code 0x00000019",
+    "solution": "Run `sfc /scannow`, check RAM modules, and update storage drivers."
+  },
+  {
+    "code": "BAD_POOL_CALLER",
+    "title": "Blue Screen: BAD_POOL_CALLER",
+    "symptom": "BSOD stop code 0x000000C2",
+    "solution": "Update all drivers, check for faulty RAM, and disable overclocking."
+  },
+  {
+    "code": "DRIVER_POWER_STATE_FAILURE",
+    "title": "Blue Screen: DRIVER_POWER_STATE_FAILURE",
+    "symptom": "BSOD stop code 0x0000009F",
+    "solution": "Update device drivers, disable fast startup, and uninstall recently added hardware."
+  },
+  {
+    "code": "POWER_IRQL_NOT_LESS_OR_EQUAL",
+    "title": "Blue Screen: POWER_IRQL_NOT_LESS_OR_EQUAL",
+    "symptom": "BSOD during sleep/wake or shutdown",
+    "solution": "Update power management drivers, disable USB selective suspend, and check for faulty devices."
+  },
+  {
+    "code": "UNMOUNTABLE_BOOT_VOLUME",
+    "title": "Blue Screen: UNMOUNTABLE_BOOT_VOLUME",
+    "symptom": "BSOD stop code 0x000000ED",
+    "solution": "Run `chkdsk /f /r`, repair boot configuration with `bootrec`, and replace the drive if failing."
+  },
+  {
+    "code": "PFN_LIST_CORRUPT",
+    "title": "Blue Screen: PFN_LIST_CORRUPT",
+    "symptom": "BSOD stop code 0x0000004E",
+    "solution": "Check and update storage controller drivers, test RAM, and run DISM repair."
+  },
+  {
+    "code": "NTFS_FILE_SYSTEM",
+    "title": "Blue Screen: NTFS_FILE_SYSTEM",
+    "symptom": "BSOD stop code 0x00000024",
+    "solution": "Run `chkdsk`, update storage drivers, and check drive health."
+  },
+  {
+    "code": "FAT_FILE_SYSTEM",
+    "title": "Blue Screen: FAT_FILE_SYSTEM",
+    "symptom": "BSOD stop code 0x00000023",
+    "solution": "Run `chkdsk /f`, update storage drivers, and verify disk integrity."
+  },
+  {
+    "code": "USB_OVERCURRENT_DETECTED",
+    "title": "USB Device Overcurrent Detected",
+    "symptom": "USB ports disabled due to overcurrent",
+    "solution": "Disconnect all USB devices, reboot, and reconnect one at a time to identify the faulty device."
+  },
+  {
+    "code": "DNS_PROBE_FINISHED_NO_INTERNET",
+    "title": "DNS Probe Finished No Internet",
+    "symptom": "Browser shows this error when loading pages",
+    "solution": "Flush DNS cache (`ipconfig /flushdns`), change DNS servers to Google (8.8.8.8), and restart your router."
+  },
+  {
+    "code": "HTTP_500_INTERNAL_SERVER_ERROR",
+    "title": "HTTP 500 Internal Server Error",
+    "symptom": "Web application returns a 500 status",
+    "solution": "Check server logs for stack traces, ensure correct file permissions, and verify environment variables."
+  },
+  {
+    "code": "SSL_HANDSHAKE_FAILURE",
+    "title": "SSL Handshake Failure",
+    "symptom": "Secure connections fail with SSL/TLS error",
+    "solution": "Verify server certificate validity, update TLS libraries, and ensure client supports required cipher suites."
+  }
+]
