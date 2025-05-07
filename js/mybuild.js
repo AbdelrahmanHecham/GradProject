@@ -32,7 +32,7 @@ function renderBuilds(newBuilds) {
     const buildId = b.id;
     let total = 0;
     let html = `<div class="build-card">
-      <h3><i class="fas fa-box"></i> <input type="text" class="build-name-input" value="${b.purpose || ''}" placeholder="Enter build name" style="font-size:1.1rem;font-weight:600;border:none;background:transparent;outline:1px solid #ddd;border-radius:4px;padding:2px 8px;width:60%"><span class="name-status" style="margin-left:8px;font-size:0.95rem;color:#2196f3"></span></h3>
+      <h3><i class="fas fa-box"></i> <input type="text" class="build-name-input" value="${(b.purpose && b.purpose.trim() !== '') ? b.purpose : 'Untitled Build'}" placeholder="Enter build name" style="font-size:1.1rem;font-weight:600;border:none;background:transparent;outline:1px solid #ddd;border-radius:4px;padding:2px 8px;width:60%"><span class="name-status" style="margin-left:8px;font-size:0.95rem;color:#2196f3"></span></h3>
       <div><strong>Saved:</strong> ${b.savedAt ? new Date(b.savedAt).toLocaleString() : '5/7/2025, 11:14:25 AM (Local)'}</div>
       <form class="update-build-form" data-build-id="${buildId}">
         <table class="build-components"><thead><tr><th>Component</th><th>Model</th><th>Qty</th><th>Price</th></tr></thead><tbody>`;
@@ -66,8 +66,8 @@ function renderBuilds(newBuilds) {
       nameInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
           e.preventDefault();
-          const newName = nameInput.value.trim();
-          if (!newName) return;
+          let newName = nameInput.value.trim();
+          if (!newName || newName === 'Untitled Build') return;
           nameStatus.textContent = 'Saving...';
           // Get the build object for this build
           const buildIdx = builds.findIndex(x => x.id == buildId);
@@ -80,12 +80,14 @@ function renderBuilds(newBuilds) {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ build: buildObj, purpose: newName, savedAt: '2025-05-07T11:16:06+03:00' })
+            body: JSON.stringify({ build: buildObj, purpose: newName, savedAt: new Date().toISOString() })
           })
           .then(res => res.json())
           .then(json => {
             if (json.message && json.message.includes('updated')) {
               nameStatus.textContent = 'Saved!';
+              // Update the builds array so the new name persists in UI and future updates
+              builds[buildIdx].purpose = newName;
               setTimeout(() => { nameStatus.textContent = ''; }, 1200);
             } else {
               nameStatus.textContent = json.message || 'Update failed.';
@@ -144,9 +146,10 @@ function renderBuilds(newBuilds) {
       });
       // Get build name from input and set as purpose
       const buildNameInput = this.closest('.build-card').querySelector('.build-name-input');
-      const buildName = buildNameInput ? buildNameInput.value.trim() : '';
-      // Set current local time as savedAt
-      const savedAt = '2025-05-07T11:12:10+03:00';
+      let buildName = buildNameInput ? buildNameInput.value.trim() : '';
+      if (buildName === 'Untitled Build') buildName = '';
+      // Use current time for savedAt
+      const savedAt = new Date().toISOString();
       const statusSpan = this.querySelector('.update-status');
       statusSpan.textContent = 'Saving...';
       fetch(`/api/builds/${buildId}`, {

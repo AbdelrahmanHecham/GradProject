@@ -49,51 +49,75 @@ const componentFiles = {
   
   // === Step 3: Compute a PC build from userChoices + componentData ===
   function computeBuild() {
-    // List of categories to generate random components for
-    const categories = ['cpu', 'gpu', 'ram', 'storage', 'motherboard', 'psu', 'case', 'cooler', 'monitor'];
+    // Select components in priority order
+    const categories = ['cpu', 'gpu', 'ram', 'motherboard', 'case', 'psu', 'storage', 'cooler', 'monitor'];
     const budget = (window.userChoices && userChoices.budget) ? parseFloat(userChoices.budget) : 0;
+    const purpose = (window.userChoices && userChoices.purpose) ? userChoices.purpose : null;
     let build = {};
     let totalCost = 0;
-    let found = false;
-    let attempts = 0;
-    const maxAttempts = 1000;
-    
-    // Try up to maxAttempts to find a valid random build within budget
-    while (!found && attempts < maxAttempts) {
-      attempts++;
-      let tempBuild = {};
-      let tempCost = 0;
-      let valid = true;
-      for (const category of categories) {
-        const items = componentData[category] || [];
-        if (items.length === 0) {
-          tempBuild[category] = { model: 'No match', price: 0 };
-          continue;
-        }
-        const randomIdx = Math.floor(Math.random() * items.length);
-        const pick = items[randomIdx];
-        const price = parseFloat(pick.price) || 0;
-        tempBuild[category] = pick;
-        tempCost += price;
-        if (tempCost > budget) {
-          valid = false;
-          break;
+    let remainingBudget = budget;
+    const TOP_N = 3; // Pick randomly from top 3 per category for some variety
+
+    // --- CPU & Motherboard compatibility logic ---
+    // 1. Pick CPU first (smart/random within budget)
+    const cpuItems = (componentData['cpu'] || []).filter(item => parseFloat(item.price) <= remainingBudget);
+    if (!cpuItems.length) {
+      build['cpu'] = { model: 'No match', price: 0 };
+      build['motherboard'] = { model: 'No match', price: 0 };
+    } else {
+      // Sort by purpose, pick randomly from top N
+      cpuItems.sort((a, b) => (parseFloat(b[purpose]) || 0) - (parseFloat(a[purpose]) || 0));
+      let cpuPick, mbPick, cpuSocket, cpuPrice, mbPrice;
+      let foundCombo = false;
+      for (let attempt = 0; attempt < 100 && !foundCombo; attempt++) {
+        cpuPick = cpuItems[Math.floor(Math.random() * Math.min(TOP_N, cpuItems.length))];
+        cpuSocket = cpuPick.socket || cpuPick.Socket || cpuPick.socket_type || '';
+        cpuPrice = parseFloat(cpuPick.price) || 0;
+        // Find motherboards with matching socket and affordable
+        const mbItems = (componentData['motherboard'] || []).filter(mb => {
+          const mbSocket = mb.socket || mb.Socket || mb.socket_type || '';
+          const mbPriceVal = parseFloat(mb.price) || 0;
+          return mbSocket === cpuSocket && (cpuPrice + mbPriceVal) <= remainingBudget;
+        });
+        if (mbItems.length) {
+          mbItems.sort((a, b) => (parseFloat(b[purpose]) || 0) - (parseFloat(a[purpose]) || 0));
+          mbPick = mbItems[Math.floor(Math.random() * Math.min(TOP_N, mbItems.length))];
+          mbPrice = parseFloat(mbPick.price) || 0;
+          build['cpu'] = cpuPick;
+          build['motherboard'] = mbPick;
+          totalCost += cpuPrice + mbPrice;
+          remainingBudget -= cpuPrice + mbPrice;
+          foundCombo = true;
         }
       }
-      if (valid) {
-        build = tempBuild;
-        totalCost = tempCost;
-        found = true;
+      if (!foundCombo) {
+        build['cpu'] = { model: 'No match', price: 0 };
+        build['motherboard'] = { model: 'No match', price: 0 };
       }
     }
-    
-    if (!found) {
-      alert('Could not find a valid random build within your budget. Try increasing your budget or check your component data.');
-      build = {};
-      categories.forEach(category => build[category] = { model: 'No match', price: 0 });
-      totalCost = 0;
+
+    // --- Other categories ---
+    const otherCategories = categories.filter(cat => cat !== 'cpu' && cat !== 'motherboard');
+    for (const category of otherCategories) {
+      const items = componentData[category] || [];
+      // Filter to those within remaining budget
+      const affordable = items.filter(item => parseFloat(item.price) <= remainingBudget);
+      if (affordable.length === 0) {
+        build[category] = { model: 'No match', price: 0 };
+        continue;
+      }
+      // Sort by selected purpose score (descending)
+      affordable.sort((a, b) => (parseFloat(b[purpose]) || 0) - (parseFloat(a[purpose]) || 0));
+      // Take top N, or fewer if not enough
+      const topChoices = affordable.slice(0, TOP_N);
+      // Pick randomly from top N
+      const pick = topChoices[Math.floor(Math.random() * topChoices.length)];
+      build[category] = pick;
+      const price = parseFloat(pick.price) || 0;
+      totalCost += price;
+      remainingBudget -= price;
     }
-    
+
     // Now hand off to your existing display logic in recommendations.html
     if (typeof displayResults === 'function') {
       displayResults(build, totalCost);

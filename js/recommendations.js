@@ -419,6 +419,11 @@ function displayResults(build, totalCost) {
                 return `${item.model} ($${item.price})`;
             }
         }
+        // Always enable the dropdown initially, even if build[category] is 'No match'
+        if (build[category] && (build[category].model === 'No match' || build[category].model === undefined)) {
+            input.value = '';
+        }
+        input.disabled = false;
         input.addEventListener('input', function() {
             updateDetailsInput(input.value);
             // Update build and summary if a valid option is selected

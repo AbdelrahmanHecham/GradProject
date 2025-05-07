@@ -253,7 +253,7 @@ app.get('/api/builds', requireAuth, (req, res) => {
       const builds = rows.map(r => ({
         id: r.id,
         build: JSON.parse(r.build),
-        purpose: r.purpose || '',
+        purpose: (r.purpose && r.purpose.trim() !== '') ? r.purpose : 'Untitled Build',
         savedAt: r.savedAt || null
       }));
       console.log('DEBUG /api/builds returning:', builds);
@@ -273,21 +273,30 @@ app.put('/api/builds/:id', requireAuth, (req, res) => {
     return res.status(400).json({ message: 'No build data provided.' });
   }
   const buildStr = JSON.stringify(build);
-  db.run(
-    `UPDATE user_builds SET build = ?, purpose = COALESCE(?, purpose), savedAt = COALESCE(?, savedAt) WHERE id = ? AND userId = ?`,
-    [buildStr, purpose, savedAt, buildId, userId],
-    function(err) {
-      if (err) {
-        console.error('DEBUG: Database error in PUT /api/builds/:id', err);
-        return res.status(500).json({ message: 'Database error.' });
-      }
-      if (this.changes === 0) {
-        console.log('DEBUG: No build updated for buildId', buildId, 'userId', userId);
-        return res.status(404).json({ message: 'Build not found.' });
-      }
-      res.json({ message: 'Build updated.' });
+  // Only update purpose if it's a non-empty string
+  const updateFields = ['build = ?'];
+  const updateValues = [buildStr];
+  if (purpose && typeof purpose === 'string' && purpose.trim() !== '') {
+    updateFields.push('purpose = ?');
+    updateValues.push(purpose);
+  }
+  if (savedAt) {
+    updateFields.push('savedAt = ?');
+    updateValues.push(savedAt);
+  }
+  updateValues.push(buildId, userId);
+  const sql = `UPDATE user_builds SET ${updateFields.join(', ')} WHERE id = ? AND userId = ?`;
+  db.run(sql, updateValues, function(err) {
+    if (err) {
+      console.error('DEBUG: Database error in PUT /api/builds/:id', err);
+      return res.status(500).json({ message: 'Database error.' });
     }
-  );
+    if (this.changes === 0) {
+      console.log('DEBUG: No build updated for buildId', buildId, 'userId', userId);
+      return res.status(404).json({ message: 'Build not found.' });
+    }
+    res.json({ message: 'Build updated.' });
+  });
 });
 
 // Delete a Build

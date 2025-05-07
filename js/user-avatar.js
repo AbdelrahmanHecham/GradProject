@@ -8,6 +8,25 @@
     return; // Don't show on home
   }
   document.addEventListener('DOMContentLoaded', function() {
+    // --- Dark/Light Mode Toggle ---
+    let darkToggle = document.getElementById('theme-toggle');
+    if (!darkToggle) {
+      darkToggle = document.createElement('button');
+      darkToggle.id = 'theme-toggle';
+      darkToggle.className = 'theme-toggle-btn';
+      darkToggle.setAttribute('aria-label', 'Toggle dark/light mode');
+      darkToggle.title = 'Toggle dark/light mode';
+      darkToggle.innerHTML = '<span class="theme-icon">&#9788;</span>'; // Default sun icon
+      // Place toggle before avatar
+      var header = document.querySelector('header');
+      if (header) {
+        header.appendChild(darkToggle);
+      } else {
+        document.body.appendChild(darkToggle);
+      }
+    }
+
+    // --- Avatar ---
     let avatar = document.getElementById('user-avatar');
     if (!avatar) {
       avatar = document.createElement('div');
@@ -15,7 +34,7 @@
       avatar.className = 'user-avatar';
       avatar.setAttribute('aria-label', 'User profile avatar');
       avatar.title = 'Profile';
-      // Place in header if possible
+      // Place avatar after toggle
       var header = document.querySelector('header');
       if (header) {
         header.appendChild(avatar);
@@ -23,6 +42,32 @@
         document.body.appendChild(avatar);
       }
     }
+    // Ensure toggle is left of avatar
+    if (header && darkToggle && avatar) {
+      header.insertBefore(darkToggle, avatar);
+    }
+
+    // --- Theme Logic ---
+    function setTheme(theme) {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      localStorage.setItem('theme', theme);
+      // Update icon
+      if (theme === 'dark') {
+        darkToggle.innerHTML = '<span class="theme-icon">&#9790;</span>'; // Moon
+      } else {
+        darkToggle.innerHTML = '<span class="theme-icon">&#9788;</span>'; // Sun
+      }
+    }
+    // Initial theme
+    let savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    // Toggle event
+    darkToggle.onclick = function(e) {
+      e.stopPropagation();
+      let current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    };
+
     // Get initials
     let username = localStorage.getItem('username') || '';
     let initials = '?';

@@ -1,24 +1,24 @@
-name,price,core_count,core_clock,boost_clock,tdp,graphics,smt
-AMD Ryzen 7 7800X3D,339,8,4.2,5,120,Radeon,true
-AMD Ryzen 5 7600X,204.99,6,4.7,5.3,105,Radeon,true
-AMD Ryzen 5 5600X,144.31,6,3.7,4.6,65,,true
-AMD Ryzen 5 7600,185,6,3.8,5.1,65,Radeon,true
-Intel Core i9-14900K,544.99,24,3.2,6,125,Intel UHD Graphics 770,true
-Intel Core i7-14700K,399.99,20,3.4,5.6,125,Intel UHD Graphics 770,true
-Intel Core i5-12400F,128,6,2.5,4.4,65,,true
-AMD Ryzen 5 3600,84,6,3.6,4.2,65,,true
-AMD Ryzen 7 7700X,288.81,8,4.5,5.4,105,Radeon,true
-AMD Ryzen 9 7950X3D,564,16,4.2,5.7,120,Radeon,true
-AMD Ryzen 5 5600,129.99,6,3.5,4.4,65,,true
-AMD Ryzen 7 5800X,202,8,3.8,4.7,105,,true
-Intel Core i5-12600KF,159.13,10,3.7,4.9,125,,true
-AMD Ryzen 5 5500,91.53,6,3.6,4.2,65,,true
-Intel Core i7-12700K,248,12,3.6,5,125,Intel UHD Graphics 770,true
-AMD Ryzen 7 5700X,171.89,8,3.4,4.6,65,,true
-Intel Core i7-13700K,359,16,3.4,5.4,125,Intel UHD Graphics 770,true
-Intel Core i5-12600K,175.74,10,3.7,4.9,125,Intel UHD Graphics 770,true
-AMD Ryzen 7 5800X3D,261.18,8,3.4,4.5,105,,true
-AMD Ryzen 9 7900X,396.58,12,4.7,5.6,170,Radeon,true
+name,price,socket,core_count,core_clock,boost_clock,tdp,graphics,smt
+AMD Ryzen 7 7800X3D,339,AM5,8,4.2,5,120,Radeon,true
+AMD Ryzen 5 7600X,204.99,AM5,6,4.7,5.3,105,Radeon,true
+AMD Ryzen 5 5600X,144.31,AM4,6,3.7,4.6,65,,true
+AMD Ryzen 5 7600,185,AM5,6,3.8,5.1,65,Radeon,true
+Intel Core i9-14900K,544.99,LGA1700,24,3.2,6,125,Intel UHD Graphics 770,true
+Intel Core i7-14700K,399.99,LGA1700,20,3.4,5.6,125,Intel UHD Graphics 770,true
+Intel Core i5-12400F,128,LGA1700,6,2.5,4.4,65,,true
+AMD Ryzen 5 3600,84,AM4,6,3.6,4.2,65,,true
+AMD Ryzen 7 7700X,288.81,AM5,8,4.5,5.4,105,Radeon,true
+AMD Ryzen 9 7950X3D,564,AM5,16,4.2,5.7,120,Radeon,true
+AMD Ryzen 5 5600,129.99,AM4,6,3.5,4.4,65,,true
+AMD Ryzen 7 5800X,202,AM4,8,3.8,4.7,105,,true
+Intel Core i5-12600KF,159.13,LGA1700,10,3.7,4.9,125,,true
+AMD Ryzen 5 5500,91.53,AM4,6,3.6,4.2,65,,true
+Intel Core i7-12700K,248,LGA1700,12,3.6,5,125,Intel UHD Graphics 770,true
+AMD Ryzen 7 5700X,171.89,AM4,8,3.4,4.6,65,,true
+Intel Core i7-13700K,359,LGA1700,16,3.4,5.4,125,Intel UHD Graphics 770,true
+Intel Core i5-12600K,175.74,LGA1700,10,3.7,4.9,125,Intel UHD Graphics 770,true
+AMD Ryzen 7 5800X3D,261.18,AM4,8,3.4,4.5,105,,true
+AMD Ryzen 9 7900X,396.58,AM5,12,4.7,5.6,170,Radeon,true
 AMD Ryzen 5 5600G,134.48,6,3.9,4.4,65,Radeon Vega 7,true
 AMD Ryzen 9 5900X,277.99,12,3.7,4.8,105,,true
 Intel Core i5-13600K,283.99,14,3.5,5.1,125,Intel UHD Graphics 770,true
