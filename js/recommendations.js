@@ -592,13 +592,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       // Compose build object
-      const buildToSave = {
-        build: window.currentBuild,
-        totalCost: window.currentBuildTotalCost,
-        purpose: window.userChoices.purpose,
-        budget: window.userChoices.budget,
-        preferences: window.userChoices.preferences
-      };
+      const buildToSave = window.currentBuild;
+      console.log('DEBUG: Saving build', buildToSave);
       try {
         const res = await fetch('/api/builds', {
           method: 'POST',

@@ -906,10 +906,132 @@ nav a i {
     text-align: center;
 }
 
-/* Button Icons */
-.btn i {
-    margin-right: 0.5rem;
+/* MyBuild Modern Styles */
+.mybuild-page {
+    padding: 2rem 1rem 3rem 1rem;
+    min-height: 80vh;
+    background: #f7fafd;
 }
+#mybuild-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+    margin-top: 1.5rem;
+}
+.build-card-wrapper {
+    flex: 1 1 350px;
+    max-width: 420px;
+    min-width: 320px;
+    display: flex;
+    justify-content: center;
+}
+.build-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 28px rgba(33,150,243,0.12), 0 1.5px 6px rgba(44,62,80,0.06);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    width: 100%;
+    transition: box-shadow 0.22s cubic-bezier(.39,.575,.56,1);
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+.build-card:hover {
+    box-shadow: 0 8px 36px rgba(33,150,243,0.21), 0 3px 12px rgba(44,62,80,0.10);
+    transform: translateY(-2px) scale(1.01);
+}
+.build-card h3 {
+    font-size: 1.28rem;
+    font-weight: 700;
+    color: #1769aa;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.01em;
+}
+.build-card .build-components {
+    width: 100%;
+    margin: 1rem 0 0.5rem 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #f7fafd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1.5px 6px rgba(33,150,243,0.04);
+}
+.build-card .build-components th, .build-card .build-components td {
+    padding: 0.62rem 0.7rem;
+    font-size: 1.01rem;
+    text-align: left;
+}
+.build-card .build-components th {
+    background: #e3eafc;
+    color: #1769aa;
+    font-weight: 600;
+    border-bottom: 2px solid #e3eafc;
+}
+.build-card .build-components tr:nth-child(even) td {
+    background: #f0f4fa;
+}
+.build-card .build-components tr:nth-child(odd) td {
+    background: #f7fafd;
+}
+.build-card input[type="number"] {
+    width: 60px;
+    padding: 0.35rem 0.5rem;
+    border: 1.5px solid #2196f3;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.build-card input[type="number"]:focus {
+    border-color: #1769aa;
+    box-shadow: 0 0 0 2px #bbdefb;
+    background: #f7fafd;
+}
+.build-card .btn.update-btn {
+    background: linear-gradient(90deg, #2196f3 60%, #21cbf3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.06rem;
+    font-weight: 600;
+    padding: 0.55rem 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.09);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.build-card .btn.update-btn:hover {
+    background: linear-gradient(90deg, #1769aa 60%, #21cbf3 100%);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(33,150,243,0.16);
+}
+.build-card .update-status {
+    font-size: 1.02rem;
+    margin-left: 10px;
+    min-width: 60px;
+    display: inline-block;
+    vertical-align: middle;
+    transition: color 0.2s;
+}
+.build-card .update-status {
+    color: #2196f3;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+@media (max-width: 900px) {
+    #mybuild-list {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .build-card-wrapper {
+        min-width: 90vw;
+        max-width: 98vw;
+    }
+    .build-card {
+        padding: 1.3rem 0.7rem 1rem 0.7rem;
+    }
+}
+
 
 /* Purpose Options */
 .purpose-option {

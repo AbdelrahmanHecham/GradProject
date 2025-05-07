@@ -218,9 +218,30 @@ app.post('/api/builds', requireAuth, (req, res) => {
   );
 });
 
+// Delete a Saved Build
+app.delete('/api/builds/:id', requireAuth, (req, res) => {
+  const userId = req.session.userId;
+  const buildId = req.params.id;
+  db.run(
+    `DELETE FROM user_builds WHERE id = ? AND userId = ?`,
+    [buildId, userId],
+    function(err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Database error.' });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ message: 'Build not found or not authorized.' });
+      }
+      res.json({ message: 'Build deleted successfully.' });
+    }
+  );
+});
+
 // List Saved Builds
 app.get('/api/builds', requireAuth, (req, res) => {
   const userId = req.session.userId;
+  console.log('DEBUG /api/builds for userId:', userId);
   db.all(
     `SELECT id, build, savedAt FROM user_builds WHERE userId = ? ORDER BY savedAt DESC`,
     [userId],
@@ -234,7 +255,36 @@ app.get('/api/builds', requireAuth, (req, res) => {
         build: JSON.parse(r.build),
         savedAt: r.savedAt
       }));
+      console.log('DEBUG /api/builds returning:', builds);
       res.json({ builds });
+    }
+  );
+});
+
+// Update a Build
+app.put('/api/builds/:id', requireAuth, (req, res) => {
+  const buildId = req.params.id;
+  const userId = req.session.userId;
+  const { build } = req.body;
+  console.log('DEBUG PUT /api/builds/:id', { buildId, userId, build });
+  if (!build) {
+    console.log('DEBUG: No build data provided');
+    return res.status(400).json({ message: 'No build data provided.' });
+  }
+  const buildStr = JSON.stringify(build);
+  db.run(
+    `UPDATE user_builds SET build = ? WHERE id = ? AND userId = ?`,
+    [buildStr, buildId, userId],
+    function(err) {
+      if (err) {
+        console.error('DEBUG: Database error in PUT /api/builds/:id', err);
+        return res.status(500).json({ message: 'Database error.' });
+      }
+      if (this.changes === 0) {
+        console.log('DEBUG: No build updated for buildId', buildId, 'userId', userId);
+        return res.status(404).json({ message: 'Build not found.' });
+      }
+      res.json({ message: 'Build updated.' });
     }
   );
 });
