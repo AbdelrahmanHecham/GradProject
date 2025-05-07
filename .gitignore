@@ -1,0 +1,11 @@
+# Node dependencies
+node_modules/
+
+# Local SQLite DB
+data/users.db
+
+# Environment
+.env
+
+# OS
+.DS_Store

@@ -22,6 +22,9 @@ document.getElementById('login-form').addEventListener('submit', async e => {
       if (json.username) {
         localStorage.setItem('username', json.username);
       }
+      if (json.address !== undefined) {
+        localStorage.setItem('address', json.address || '');
+      }
       // Redirect to recommendations or dashboard
       window.location.href = 'recommendations.html';
     }

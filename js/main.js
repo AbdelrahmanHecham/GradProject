@@ -18,10 +18,9 @@ const componentFiles = {
   const totalFiles = Object.keys(componentFiles).length;
   
   /**
-   * Loads all component CSVs via PapaParse,
-   * stores parsed rows in `componentData`,
-   * and calls callback() once all are done.
+   * Loads all component CSV files and calls callback() once all are done.
    */
+  
   function loadAllComponents(callback) {
     Object.entries(componentFiles).forEach(([category, url]) => {
       Papa.parse(url, {

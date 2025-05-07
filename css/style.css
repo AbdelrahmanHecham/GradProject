@@ -1172,6 +1172,24 @@ nav a i {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  color: #00bcd4;
+  border-radius: 50%;
+  border: 2px solid #00bcd4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.3rem;
+  box-shadow: 0 2px 8px rgba(0,188,212,0.10);
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
 .timeline-content {
     background: white;
     padding: 1.5rem;

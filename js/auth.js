@@ -1,10 +1,15 @@
 document.getElementById('signup-form').addEventListener('submit', async e => {
     e.preventDefault();
     const form = e.target;
+    const firstName = form.firstName.value.trim();
+    const lastName = form.lastName.value.trim();
+    const address = form.address.value.trim();
+    const username = `${firstName} ${lastName}`;
     const data = {
-      username: form.username.value.trim(),
+      username,
       email: form.email.value.trim(),
-      password: form.password.value
+      password: form.password.value,
+      address
     };
   
     try {
@@ -20,6 +25,9 @@ document.getElementById('signup-form').addEventListener('submit', async e => {
           // Set a simple auth flag (simulate auto-login on signup)
           localStorage.setItem('isAuthenticated', 'true');
           localStorage.setItem('username', data.username);
+          if (typeof result.address !== 'undefined') {
+            localStorage.setItem('address', result.address || '');
+          }
           setTimeout(() => {
             window.location.href = 'index.html';
           }, 1200); // Wait 1.2s before redirect
