@@ -32,8 +32,8 @@ function renderBuilds(newBuilds) {
     const buildId = b.id;
     let total = 0;
     let html = `<div class="build-card">
-      <h3><i class="fas fa-box"></i> ${b.purpose || 'Custom'}</h3>
-      <div><strong>Saved:</strong> ${b.savedAt ? new Date(b.savedAt).toLocaleString() : ''}</div>
+      <h3><i class="fas fa-box"></i> <input type="text" class="build-name-input" value="${b.purpose || ''}" placeholder="Enter build name" style="font-size:1.1rem;font-weight:600;border:none;background:transparent;outline:1px solid #ddd;border-radius:4px;padding:2px 8px;width:60%"><span class="name-status" style="margin-left:8px;font-size:0.95rem;color:#2196f3"></span></h3>
+      <div><strong>Saved:</strong> ${b.savedAt ? new Date(b.savedAt).toLocaleString() : '5/7/2025, 11:14:25 AM (Local)'}</div>
       <form class="update-build-form" data-build-id="${buildId}">
         <table class="build-components"><thead><tr><th>Component</th><th>Model</th><th>Qty</th><th>Price</th></tr></thead><tbody>`;
     for (const [category, comp] of Object.entries(build)) {
@@ -55,6 +55,48 @@ function renderBuilds(newBuilds) {
       </form>
     </div>`;
     container.innerHTML += `<div class="build-card-wrapper">${html}</div>`;
+  });
+
+  // Attach event listeners for build name input (save on Enter)
+  document.querySelectorAll('.build-card').forEach(card => {
+    const nameInput = card.querySelector('.build-name-input');
+    const buildId = card.querySelector('.update-build-form').dataset.buildId;
+    const nameStatus = card.querySelector('.name-status');
+    if (nameInput) {
+      nameInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const newName = nameInput.value.trim();
+          if (!newName) return;
+          nameStatus.textContent = 'Saving...';
+          // Get the build object for this build
+          const buildIdx = builds.findIndex(x => x.id == buildId);
+          if (buildIdx === -1) {
+            nameStatus.textContent = 'Build not found.';
+            return;
+          }
+          const buildObj = JSON.parse(JSON.stringify(builds[buildIdx].build));
+          fetch(`/api/builds/${buildId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ build: buildObj, purpose: newName, savedAt: '2025-05-07T11:16:06+03:00' })
+          })
+          .then(res => res.json())
+          .then(json => {
+            if (json.message && json.message.includes('updated')) {
+              nameStatus.textContent = 'Saved!';
+              setTimeout(() => { nameStatus.textContent = ''; }, 1200);
+            } else {
+              nameStatus.textContent = json.message || 'Update failed.';
+            }
+          })
+          .catch(() => {
+            nameStatus.textContent = 'Error saving name.';
+          });
+        }
+      });
+    }
   });
 
   // Attach event listeners for update
@@ -100,13 +142,18 @@ function renderBuilds(newBuilds) {
           buildObj[category].quantity = parseInt(qtyInput.value) || 1;
         }
       });
+      // Get build name from input and set as purpose
+      const buildNameInput = this.closest('.build-card').querySelector('.build-name-input');
+      const buildName = buildNameInput ? buildNameInput.value.trim() : '';
+      // Set current local time as savedAt
+      const savedAt = '2025-05-07T11:12:10+03:00';
       const statusSpan = this.querySelector('.update-status');
       statusSpan.textContent = 'Saving...';
       fetch(`/api/builds/${buildId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ build: buildObj })
+        body: JSON.stringify({ build: buildObj, purpose: buildName, savedAt })
       })
       .then(res => res.json())
       .then(json => {

@@ -298,6 +298,23 @@
       if (step === 1 && !userChoices.purpose) {
         return alert('Please select the primary purpose of your PC');
       }
+      if (step === 2) {
+        const budgetInput = document.getElementById('budgetInput');
+        const budgetVal = budgetInput ? budgetInput.value.trim() : '';
+        if (!budgetVal || isNaN(budgetVal) || parseFloat(budgetVal) <= 0) {
+          alert('Please enter a valid budget before continuing!');
+          return;
+        }
+        userChoices.budget = parseFloat(budgetVal);
+        // Generate random preferences for step 3 sliders
+        const gaming = Math.floor(Math.random() * 10) + 1;
+        const work = Math.floor(Math.random() * 10) + 1;
+        const creation = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('gamingPref').value = gaming;
+        document.getElementById('workPref').value = work;
+        document.getElementById('creationPref').value = creation;
+        userChoices.preferences = { gaming, work, creation };
+      }
       document.querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
       document.getElementById(`step${step + 1}`).classList.remove('hidden');
     }

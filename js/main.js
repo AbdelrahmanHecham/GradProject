@@ -49,39 +49,56 @@ const componentFiles = {
   
   // === Step 3: Compute a PC build from userChoices + componentData ===
   function computeBuild() {
-    if (!window.userChoices || !userChoices.purpose) {
-      alert('Please complete the form first.');
-      return;
-    }
-  
-    const build = {};
+    // List of categories to generate random components for
+    const categories = ['cpu', 'gpu', 'ram', 'storage', 'motherboard', 'psu', 'case', 'cooler', 'monitor'];
+    const budget = (window.userChoices && userChoices.budget) ? parseFloat(userChoices.budget) : 0;
+    let build = {};
     let totalCost = 0;
-  
-    // For each category, pick the highest–scoring, within-budget part
-    Object.entries(componentData).forEach(([category, items]) => {
-      // Filter by overall budget (you could refine this to per-part budgets)
-      const affordable = items.filter(r =>
-        parseFloat(r.price) <= userChoices.budget
-      );
-
-      // Sort by the selected purpose (gaming, work, creation)
-      const sorted = affordable.sort((a, b) =>
-        (parseFloat(b[userChoices.purpose]) || 0)
-        - (parseFloat(a[userChoices.purpose]) || 0)
-      );
-
-      // Pick the top, or a placeholder if none matched
-      const pick = sorted[0] || { model: 'No match', price: 0 };
-      build[category] = pick;
-      // DO NOT add to totalCost here, let displayResults handle cost based on submit buttons
-    });
-
+    let found = false;
+    let attempts = 0;
+    const maxAttempts = 1000;
+    
+    // Try up to maxAttempts to find a valid random build within budget
+    while (!found && attempts < maxAttempts) {
+      attempts++;
+      let tempBuild = {};
+      let tempCost = 0;
+      let valid = true;
+      for (const category of categories) {
+        const items = componentData[category] || [];
+        if (items.length === 0) {
+          tempBuild[category] = { model: 'No match', price: 0 };
+          continue;
+        }
+        const randomIdx = Math.floor(Math.random() * items.length);
+        const pick = items[randomIdx];
+        const price = parseFloat(pick.price) || 0;
+        tempBuild[category] = pick;
+        tempCost += price;
+        if (tempCost > budget) {
+          valid = false;
+          break;
+        }
+      }
+      if (valid) {
+        build = tempBuild;
+        totalCost = tempCost;
+        found = true;
+      }
+    }
+    
+    if (!found) {
+      alert('Could not find a valid random build within your budget. Try increasing your budget or check your component data.');
+      build = {};
+      categories.forEach(category => build[category] = { model: 'No match', price: 0 });
+      totalCost = 0;
+    }
+    
     // Now hand off to your existing display logic in recommendations.html
-    // (which should render `build` and `totalCost` into that #results div)
     if (typeof displayResults === 'function') {
-      displayResults(build, 0); // Start with 0, let UI handle cost
+      displayResults(build, totalCost);
     } else {
-      console.log('Build:', build, 'Total Cost:', 0);
+      console.log('Build:', build, 'Total Cost:', totalCost);
     }
   }
   

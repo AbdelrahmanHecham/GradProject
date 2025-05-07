@@ -202,12 +202,12 @@ app.post('/api/check-compatibility', (req, res) => {
 
 // Save a Build
 app.post('/api/builds', requireAuth, (req, res) => {
-  const { build } = req.body;
+  const { build, purpose, savedAt } = req.body;
   const userId    = req.session.userId;
   const buildStr  = JSON.stringify(build);
   db.run(
-    `INSERT INTO user_builds (userId, build) VALUES (?,?)`,
-    [userId, buildStr],
+    `INSERT INTO user_builds (userId, build, purpose, savedAt) VALUES (?,?,?,?)`,
+    [userId, buildStr, purpose || null, savedAt || null],
     function(err) {
       if (err) {
         console.error(err);
@@ -243,7 +243,7 @@ app.get('/api/builds', requireAuth, (req, res) => {
   const userId = req.session.userId;
   console.log('DEBUG /api/builds for userId:', userId);
   db.all(
-    `SELECT id, build, savedAt FROM user_builds WHERE userId = ? ORDER BY savedAt DESC`,
+    `SELECT id, build, purpose, savedAt FROM user_builds WHERE userId = ? ORDER BY savedAt DESC`,
     [userId],
     (err, rows) => {
       if (err) {
@@ -253,7 +253,8 @@ app.get('/api/builds', requireAuth, (req, res) => {
       const builds = rows.map(r => ({
         id: r.id,
         build: JSON.parse(r.build),
-        savedAt: r.savedAt
+        purpose: r.purpose || '',
+        savedAt: r.savedAt || null
       }));
       console.log('DEBUG /api/builds returning:', builds);
       res.json({ builds });
@@ -265,16 +266,16 @@ app.get('/api/builds', requireAuth, (req, res) => {
 app.put('/api/builds/:id', requireAuth, (req, res) => {
   const buildId = req.params.id;
   const userId = req.session.userId;
-  const { build } = req.body;
-  console.log('DEBUG PUT /api/builds/:id', { buildId, userId, build });
+  const { build, purpose, savedAt } = req.body;
+  console.log('DEBUG PUT /api/builds/:id', { buildId, userId, build, purpose, savedAt });
   if (!build) {
     console.log('DEBUG: No build data provided');
     return res.status(400).json({ message: 'No build data provided.' });
   }
   const buildStr = JSON.stringify(build);
   db.run(
-    `UPDATE user_builds SET build = ? WHERE id = ? AND userId = ?`,
-    [buildStr, buildId, userId],
+    `UPDATE user_builds SET build = ?, purpose = COALESCE(?, purpose), savedAt = COALESCE(?, savedAt) WHERE id = ? AND userId = ?`,
+    [buildStr, purpose, savedAt, buildId, userId],
     function(err) {
       if (err) {
         console.error('DEBUG: Database error in PUT /api/builds/:id', err);

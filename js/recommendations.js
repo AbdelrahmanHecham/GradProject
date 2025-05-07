@@ -179,14 +179,20 @@ function showQuestion(question) {
 
 // Process user answer
 function answerQuestion(nextStepId) {
+    // If the current question expects input and the input is empty, prevent proceeding
+    if (currentQuestion && currentQuestion.input) {
+        const userInputElem = document.getElementById('userInput');
+        if (userInputElem && !userInputElem.value.trim()) {
+            alert('Please enter the required value to proceed.');
+            return;
+        }
+    }
     userPath.push({
         question: currentQuestion.text,
         answer: event.target.textContent
     });
-    
     // Find the next question
     const nextQuestion = findQuestionById(nextStepId);
-    
     if (nextQuestion) {
         showQuestion(nextQuestion);
     } else {
