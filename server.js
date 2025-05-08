@@ -5,6 +5,7 @@ const bodyParser   = require('body-parser');
 const bcrypt       = require('bcrypt');
 const sqlite3      = require('sqlite3').verbose();
 const session      = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 const path         = require('path');
 
 const app = express();
@@ -59,6 +60,7 @@ db.serialize(() => {
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(bodyParser.json());
 app.use(session({
+  store: new SQLiteStore({ db: 'sessions.sqlite', dir: path.join(__dirname, 'data') }),
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -128,6 +130,9 @@ app.post('/api/signup', async (req, res) => {
           }
           return res.status(500).json({ message: 'Database error.' });
         }
+        // Auto-login after signup
+        req.session.userId = this.lastID;
+        req.session.username = username;
         res.status(201).json({ message: 'Account created successfully!', username, address: address || '' });
       }
     );
@@ -205,12 +210,25 @@ app.post('/api/builds', requireAuth, (req, res) => {
   const { build, purpose, savedAt } = req.body;
   const userId    = req.session.userId;
   const buildStr  = JSON.stringify(build);
+  console.log('DEBUG POST /api/builds request body:', req.body);
+  console.log('DEBUG POST /api/builds inserting:', {
+    userId,
+    buildStr,
+    purpose: purpose || null,
+    savedAt: savedAt || null
+  });
+  // Debug log all variables
+  console.log('DEBUG userId:', userId);
+  console.log('DEBUG buildStr:', buildStr);
+  console.log('DEBUG purpose:', purpose);
+  console.log('DEBUG savedAt:', savedAt);
   db.run(
     `INSERT INTO user_builds (userId, build, purpose, savedAt) VALUES (?,?,?,?)`,
     [userId, buildStr, purpose || null, savedAt || null],
     function(err) {
       if (err) {
-        console.error(err);
+        console.error('DEBUG: Database error in POST /api/builds:', err);
+        console.error('DEBUG: Error stack:', err && err.stack);
         return res.status(500).json({ message: 'Database error.' });
       }
       res.status(201).json({ id: this.lastID, message: 'Build saved successfully!' });

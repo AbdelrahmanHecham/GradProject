@@ -1,0 +1,15 @@
+/* Fix Build Summary and component name visibility in dark mode */
+body.dark-mode #build-summary,
+body.dark-mode #build-summary h3,
+body.dark-mode #build-summary p,
+body.dark-mode #build-summary strong {
+  color: #fff !important;
+}
+
+body.dark-mode .component-card label {
+  color: #fff !important;
+}
+
+body.dark-mode .component-card {
+  color: #fff !important;
+}

@@ -327,6 +327,7 @@ function displayResults(build, totalCost) {
         } else {
             iconHtml = renderCategoryIcon(category);
         }
+        label.className = 'component-name-label';
         label.innerHTML = `${iconHtml} <strong>${category.toUpperCase()}</strong>`;
         wrapper.appendChild(label);
 
@@ -609,7 +610,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const res = await fetch('/api/builds', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ build: buildToSave })
+          body: JSON.stringify({
+            build: buildToSave,
+            purpose: window.userChoices?.purpose || null,
+            savedAt: null
+          }),
+          credentials: 'include' // Ensure cookies/session are sent
         });
         const json = await res.json();
         if (res.ok) {

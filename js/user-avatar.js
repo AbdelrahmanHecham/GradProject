@@ -117,24 +117,99 @@
           modal.style.top = '50%';
           modal.style.left = '50%';
           modal.style.transform = 'translate(-50%, -50%)';
-          modal.style.background = '#fff';
+          // Dark mode support
+          if (document.body.classList.contains('dark-mode')) {
+            modal.style.background = '#23262f';
+            modal.style.color = '#f6f7fa';
+            modal.style.boxShadow = '0 4px 24px rgba(33,150,243,0.20)';
+          } else {
+            modal.style.background = '#fff';
+            modal.style.color = '#222e3c';
+            modal.style.boxShadow = '0 4px 24px rgba(0,0,0,0.2)';
+          }
           modal.style.padding = '2rem 1.5rem';
           modal.style.borderRadius = '10px';
-          modal.style.boxShadow = '0 4px 24px rgba(0,0,0,0.2)';
           modal.style.zIndex = '1004';
           let fullName = (localStorage.getItem('username') || '').trim();
           let address = localStorage.getItem('address') || '';
           modal.innerHTML = `<h3 style='margin-bottom:1rem;'>My Profile</h3>
             <div style='margin-bottom:1rem;'><strong>Name:</strong> ${fullName || 'N/A'}</div>
             <div style='margin-bottom:1rem;'><strong>Address:</strong> <span id='profile-address'>${address || 'N/A'}</span></div>
-            <label style='display:block; margin-bottom:0.5rem;'>
+            <label style='display:block; margin-bottom:0.5rem; text-align:left;'>
               Edit Address:
-              <input id='address-input' type='text' style='width:100%;padding:0.5rem;margin-top:0.5rem;' value="${address}">
+              <input id='address-input' type='text' value="${address}" style="width:100%;padding:0.5rem;margin-top:0.5rem; border-radius:5px; border:1px solid #ccc; background: inherit; color: inherit;">
             </label>
             <button id='save-address-btn' style='margin-top:1rem;background:#00bcd4;color:#fff;padding:0.5rem 1.2rem;border:none;border-radius:5px;cursor:pointer;'>Save</button>
             <button id='close-profile-btn' style='margin-top:1rem;margin-left:1rem;background:#f44336;color:#fff;padding:0.5rem 1.2rem;border:none;border-radius:5px;cursor:pointer;'>Close</button>
             <div id='address-status' style='margin-top:1rem;color:#009688;'></div>`;
           document.body.appendChild(modal);
+          function applyModalTheme() {
+            if (!modal) return;
+            modal.style.textAlign = 'left'; // Always left-align text
+            if (document.body.classList.contains('dark-mode')) {
+              modal.style.background = '#23262f';
+              modal.style.color = '#f6f7fa';
+              modal.style.boxShadow = '0 4px 24px rgba(33,150,243,0.20)';
+              const input = modal.querySelector('#address-input');
+              if (input) {
+                input.style.background = '#191b22';
+                input.style.color = '#f6f7fa';
+                input.style.border = '1.5px solid #4fc3f7';
+              }
+              const saveBtn = modal.querySelector('#save-address-btn');
+              if (saveBtn) {
+                saveBtn.style.background = '#4fc3f7';
+                saveBtn.style.color = '#181a20';
+              }
+              const closeBtn = modal.querySelector('#close-profile-btn');
+              if (closeBtn) {
+                closeBtn.style.background = '#f44336';
+                closeBtn.style.color = '#fff';
+              }
+            } else {
+              modal.style.background = '#fff';
+              modal.style.color = '#222e3c';
+              modal.style.boxShadow = '0 4px 24px rgba(0,0,0,0.2)';
+              const input = modal.querySelector('#address-input');
+              if (input) {
+                input.style.background = '';
+                input.style.color = '';
+                input.style.border = '1px solid #ccc';
+              }
+              const saveBtn = modal.querySelector('#save-address-btn');
+              if (saveBtn) {
+                saveBtn.style.background = '#00bcd4';
+                saveBtn.style.color = '#fff';
+              }
+              const closeBtn = modal.querySelector('#close-profile-btn');
+              if (closeBtn) {
+                closeBtn.style.background = '#f44336';
+                closeBtn.style.color = '#fff';
+              }
+            }
+          }
+          // Initial apply
+          applyModalTheme();
+          // Listen for theme changes
+          if (!window._profileModalThemeListener) {
+            window._profileModalThemeListener = true;
+            document.addEventListener('themechange', function() {
+              const modal = document.getElementById('profile-modal');
+              if (modal) applyModalTheme();
+            });
+          }
+          // Patch the theme toggle to dispatch a custom event
+          const themeToggle = document.getElementById('theme-toggle');
+          if (themeToggle && !themeToggle._patched) {
+            const origOnClick = themeToggle.onclick;
+            themeToggle.onclick = function(e) {
+              if (origOnClick) origOnClick.call(this, e);
+              setTimeout(function() {
+                document.dispatchEvent(new Event('themechange'));
+              }, 10);
+            };
+            themeToggle._patched = true;
+          }
         } else {
           modal.style.display = 'block';
         }

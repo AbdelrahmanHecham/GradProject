@@ -1,5 +1,7 @@
 // js/saveBuild.js
-document.getElementById('save-build-btn').addEventListener('click', async () => {
+const saveBtn = document.getElementById('save-build-btn');
+if (saveBtn) {
+  saveBtn.addEventListener('click', async () => {
     try {
       // 'currentBuild' should refer to your JS object for the latest build
       const resp = await fetch('/api/builds', {
@@ -14,3 +16,4 @@ document.getElementById('save-build-btn').addEventListener('click', async () => 
       alert('Failed to save build.');
     }
   });
+}

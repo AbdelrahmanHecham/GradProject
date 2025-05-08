@@ -37,8 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
           padding:1rem;
           margin-bottom:1rem;
           border-radius:8px;
-          background:#fff;
-        ">
+        " data-error-card>
           <h3 style="margin:0 0.5rem 0.5rem;">
             <i class="fas fa-code"></i> ${item.code} — ${item.title}
           </h3>

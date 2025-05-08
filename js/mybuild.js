@@ -37,13 +37,22 @@ function renderBuilds(newBuilds) {
       <form class="update-build-form" data-build-id="${buildId}">
         <table class="build-components"><thead><tr><th>Component</th><th>Model</th><th>Qty</th><th>Price</th></tr></thead><tbody>`;
     for (const [category, comp] of Object.entries(build)) {
-      total += parseFloat(comp.price || 0) * (parseInt(comp.quantity) || 1);
+      let model = comp.model || comp.name || '-';
+      let qty = comp.quantity || 1;
+      let price = comp.price || 0;
+      if (model === 'No match') {
+        qty = 0;
+        price = 0;
+      } else {
+        qty = Math.max(1, parseInt(qty) || 1);
+      }
+      total += parseFloat(price) * parseInt(qty);
       html += `<tr>
         <td>${category}</td>
-        <td>${comp.model || comp.name || '-'}</td>
-        <td><input type="number" min="1" value="${comp.quantity || 1}" name="qty-${category}" style="width:60px"></td>
-        <td>$${comp.price || '-'}</td>
-      </tr>`;
+        <td>${model}</td>
+        <td><input type="number" min="${model === 'No match' ? 0 : 1}" value="${qty}" name="qty-${category}" style="width:60px"${model === 'No match' ? ' disabled' : ''}></td>
+        <td>$${model === 'No match' ? '0' : (price || '-')}<\/td>
+      <\/tr>`;
     }
     html += `</tbody></table>
         <div style="margin-top:8px"><strong>Total Price:</strong> $${total.toFixed(2)}</div>
