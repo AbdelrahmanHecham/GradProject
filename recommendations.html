@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SmartPC Hub - Hardware Recommendations</title>
@@ -365,5 +366,24 @@
     });
   </script>
   <script src="js/user-avatar.js"></script>
+    <!-- Chatbot Widget Start -->
+    <div id="chatbot-widget" style="display:none;">
+      <div id="chatbot-header">
+        <span><i class="fas fa-robot"></i> Troubleshooting Bot</span>
+        <button id="chatbot-close" title="Close">&times;</button>
+      </div>
+      <div id="chatbot-messages"></div>
+      <div id="chatbot-buttons"></div>
+      <form id="chatbot-form" autocomplete="off">
+        <input id="chatbot-input" type="text" placeholder="Type your question..."/>
+        <button id="chatbot-send" type="submit"><i class="fas fa-paper-plane"></i></button>
+      </form>
+    </div>
+    <button id="chatbot-toggle" title="Chat with Troubleshooting Bot" style="position:fixed;bottom:2rem;right:2rem;z-index:9998;background:linear-gradient(90deg,#3498db,#8e44ad);color:#fff;border:none;border-radius:50%;width:56px;height:56px;box-shadow:0 2px 12px rgba(44,62,80,0.18);font-size:1.8rem;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <i class="fas fa-robot"></i>
+    </button>
+    <script src="js/chatbot.js"></script>
+    <link rel="stylesheet" href="css/chatbot.css" />
+    <!-- Chatbot Widget End -->
 </body>
 </html>

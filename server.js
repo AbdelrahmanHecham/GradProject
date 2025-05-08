@@ -357,6 +357,57 @@ app.post('/api/feedback', requireAuth, (req, res) => {
   );
 });
 
+// ─── Component Price API ─────────────────────────────────────────────
+const fs = require('fs');
+const { parse } = require('csv-parse/sync');
+
+const COMPONENT_CSVS = [
+  { type: 'cpu', file: 'cpu.csv' },
+  { type: 'gpu', file: 'video-card.csv' },
+  { type: 'ram', file: 'memory.csv' },
+  { type: 'motherboard', file: 'motherboard.csv' },
+  { type: 'storage', file: 'internal-hard-drive.csv' },
+  { type: 'psu', file: 'power-supply.csv' },
+  { type: 'case', file: 'case.csv' },
+  { type: 'cooler', file: 'cpu-cooler.csv' },
+  { type: 'monitor', file: 'monitor.csv' }
+];
+
+app.get('/api/component-price', (req, res) => {
+  try {
+    const q = (req.query.name || '').trim().toLowerCase();
+    if (!q) return res.status(400).json({ message: 'Missing name parameter.' });
+    for (const comp of COMPONENT_CSVS) {
+      const filePath = path.join(__dirname, 'data', comp.file);
+      if (!fs.existsSync(filePath)) continue;
+      let rows = [];
+      try {
+        const csv = fs.readFileSync(filePath, 'utf8');
+        rows = parse(csv, { columns: true, skip_empty_lines: true, relax_column_count: true });
+      } catch (err) {
+        console.error('CSV parse error in', comp.file, ':', err.message);
+        continue;
+      }
+      for (const row of rows) {
+        // Only use rows with BOTH non-empty name and price
+        if (!row.name || !row.price || String(row.price).trim() === '') continue;
+        if (row.name.toLowerCase().includes(q) || comp.type === q) {
+          let price = row.price;
+          if (typeof price === 'string') price = price.replace(/[^\d.]/g, '');
+          price = parseFloat(price);
+          if (!isNaN(price)) {
+            return res.json({ price, name: row.name });
+          }
+        }
+      }
+    }
+    res.status(404).json({ message: 'Component not found.' });
+  } catch (err) {
+    console.error('Component price API error:', err.message);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
 // ─── Protect Static HTML Pages ─────────────────────────────────────────────────
 app.get('/recommendations.html', requireAuth, (req, res) =>
   res.sendFile(path.join(__dirname, 'recommendations.html'))
