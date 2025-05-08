@@ -6,10 +6,32 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6fa;
+    color: #222e3c;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+    font-size: 1.08rem;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5em;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1em;
+    font-size: 1.08rem;
+}
+
+section, .feature-card, .option-card, .error-card {
+    margin-bottom: 2.5rem;
 }
 
 body.dark-mode {
@@ -344,26 +366,36 @@ footer {
 }
 
 .btn {
-    background-color: #3498db;
-    color: white;
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    background: #4fc3f7;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.08rem;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-}
-
-.btn:hover {
-    background-color: #2980b9;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    text-decoration: none;
+    letter-spacing: 0.01em;
 }
 
 .btn.secondary {
-    background-color: #95a5a6;
+    background: #23262f;
+    color: #4fc3f7;
 }
 
-.btn.secondary:hover {
-    background-color: #7f8c8d;
+.btn:hover, .btn:focus {
+    background: #1976d2;
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(33,150,243,0.18);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.btn.secondary:hover, .btn.secondary:focus {
+    background: #4fc3f7;
+    color: #23262f;
 }
 
 .hidden {
@@ -372,7 +404,6 @@ footer {
 
 /* Homepage Styles */
 .hero {
-    text-align: center;
     padding: 3rem 0;
     background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5));
     background-size: cover;
@@ -380,6 +411,56 @@ footer {
     border-radius: 8px;
     margin-bottom: 2rem;
 }
+
+.hero-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.hero-gif {
+    max-width: 600px;
+    width: 48vw;
+    min-width: 320px;
+    height: auto;
+    border-radius: 2.5rem;
+    box-shadow: 0 8px 32px rgba(44,62,80,0.18), 0 1.5px 16px 0 rgba(79,195,247,0.08);
+    display: block;
+    background: #fff;
+    border: 4px solid transparent;
+    background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #4fc3f7 10%, #23262f 90%);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    transition: box-shadow 0.3s, border-radius 0.3s;
+}
+@media (max-width: 900px) {
+    .hero-gif {
+        max-width: 90vw;
+        width: 90vw;
+        min-width: 0;
+    }
+}
+
+.hero-content {
+    flex: 1 1 320px;
+    min-width: 260px;
+    text-align: left;
+    color: #fff;
+}
+@media (max-width: 900px) {
+    .hero-flex {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center;
+    }
+    .hero-content {
+        text-align: center;
+    }
+}
+
 
 .hero h2 {
     font-size: 2.5rem;
@@ -407,11 +488,30 @@ footer {
 .feature-card {
     background: white;
     padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.10);
     text-align: center;
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s, opacity 0.8s;
+    opacity: 0;
+    animation: fadeInUp 1s forwards;
 }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card:hover {
+    box-shadow: 0 8px 32px rgba(44,62,80,0.16);
+    transform: translateY(-6px) scale(1.025);
+}
+
 body.dark-mode .feature-card {
     background: #23262f !important;
     color: #f6f7fa !important;
@@ -436,13 +536,6 @@ body.dark-mode .info-card h3 {
 body.dark-mode .info-card p {
     color: #f6f7fa !important;
     font-weight: 400 !important;
-}
-body.dark-mode .info-icon {
-    background: #181a20 !important;
-    color: #4fc3f7 !important;
-    border-radius: 50%;
-    padding: 0.7rem;
-    font-size: 1.5rem;
 }
 
 body.dark-mode .info-card {
@@ -490,7 +583,6 @@ body.dark-mode .contact-header,
 body.dark-mode .contact-container,
 body.dark-mode .story-section,
 body.dark-mode .values-section,
-body.dark-mode .footer,
 body.dark-mode footer {
     background: #191b22 !important;
     color: #f6f7fa !important;
@@ -734,7 +826,7 @@ body.dark-mode .contact-form button:hover, body.dark-mode form button:hover {
   margin: 2.5rem auto 2rem auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .purpose-options {
@@ -984,13 +1076,12 @@ body.dark-mode .troubleshooting-flow span {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     text-align: center;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: all 0.3s;
 }
-
-
 
 .option-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .option-card img {
@@ -1137,6 +1228,8 @@ body.dark-mode .troubleshooting-flow span {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
     cursor: pointer;
+    opacity: 0;
+    animation: fadeInUp 1s forwards;
 }
 
 .category-card:hover {
@@ -1148,6 +1241,11 @@ body.dark-mode .troubleshooting-flow span {
     font-size: 2.5rem;
     color: #3498db;
     margin-bottom: 1rem;
+    transition: color 0.2s, transform 0.2s;
+}
+.category-icon:hover {
+    color: #1976d2;
+    transform: scale(1.18) rotate(-8deg);
 }
 
 .category-card h3 {
@@ -1194,6 +1292,8 @@ body.dark-mode .troubleshooting-flow span {
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    animation: fadeInUp 1s forwards;
 }
 
 .guide-card:hover {
@@ -2380,26 +2480,37 @@ footer {
 
 /* --- FINAL DARK MODE OVERRIDE FOR OPTION CARDS --- */
 body.dark-mode .option-card,
-body.dark-mode .option-card * {
+body.option-card, .option-card * {
+    background: transparent !important;
+    color: #222e3c !important;
+    border-color: #e0e0e0 !important;
+    box-shadow: 0 2px 10px rgba(33,150,243,0.08) !important;
+    transition: box-shadow 0.3s, transform 0.3s, opacity 0.8s;
+    opacity: 0;
+    animation: fadeInUp 1s forwards;
+}
+body.dark-mode .option-card, body.dark-mode .option-card * {
     background: transparent !important;
     color: #f6f7fa !important;
     border-color: #444857 !important;
     box-shadow: 0 2px 10px rgba(33,150,243,0.18) !important;
+    transition: box-shadow 0.3s, transform 0.3s, opacity 0.8s;
+    opacity: 0;
+    animation: fadeInUp 1s forwards;
 }
-body.dark-mode .option-card {
-    background: #23262f !important;
-    border: 1.5px solid #444857 !important;
+
+.option-card:hover {
+    box-shadow: 0 8px 32px rgba(44,62,80,0.16) !important;
+    transform: translateY(-6px) scale(1.025);
 }
-body.dark-mode .option-card h3 {
-    color: #4fc3f7 !important;
-}
+
 
 /* --- FINAL DARK MODE OVERRIDE FOR ERROR CARDS --- */
 body.dark-mode .error-card {
     background: #23262f !important;
     color: #f6f7fa !important;
-    border: 1.5px solid #444857 !important;
 }
+
 body.dark-mode .error-card h3,
 body.dark-mode .error-card p,
 body.dark-mode .error-card strong {
