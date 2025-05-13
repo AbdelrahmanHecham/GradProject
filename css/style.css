@@ -372,6 +372,24 @@ nav a.active, nav a:hover {
     gap: 1rem;
 }
 
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.logo-icon {
+    font-size: 2rem;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+}
+.logo h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
 .logo img {
     height: 50px;
 }
@@ -1930,7 +1948,164 @@ body.dark-mode .option-card h3 {
     font-family: inherit;
 }
 
-/* About Page Styles */
+/* --- Modern Profile Page Styles --- */
+.profile-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  padding: 40px 0;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.12), 0 1.5px 6px rgba(44,62,80,0.07);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-card h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #2196f3;
+  margin-bottom: 0.7rem;
+  background: #e3eaf1;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.07);
+  transition: border-color 0.2s;
+}
+
+#change-avatar-btn {
+  background: linear-gradient(90deg, #2196f3 60%, #00bcd4 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.09);
+  cursor: pointer;
+  margin-bottom: 0.4rem;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#change-avatar-btn:hover {
+  background: linear-gradient(90deg, #1976d2 60%, #0097a7 100%);
+}
+
+#avatar-upload-status {
+  font-size: 0.93rem;
+  color: #2196f3;
+  margin-bottom: 0.6rem;
+  min-height: 20px;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+}
+
+form label {
+  font-weight: 500;
+  margin-bottom: 0.1rem;
+  color: #222b45;
+}
+
+form input[type="text"],
+form input[type="password"] {
+  padding: 0.55rem 0.9rem;
+  border-radius: 7px;
+  border: 1px solid #e3eaf1;
+  background: #f8fafc;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+  border: 1.5px solid #2196f3;
+}
+
+.btn.save-btn {
+  background: linear-gradient(90deg, #2196f3 60%, #00bcd4 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.55rem 1.4rem;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.09);
+  margin-top: 0.5rem;
+  margin-bottom: 0.2rem;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn.save-btn:hover {
+  background: linear-gradient(90deg, #1976d2 60%, #0097a7 100%);
+}
+
+.btn.change-password-btn {
+  background: linear-gradient(90deg, #f44336 60%, #ff9800 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.55rem 1.4rem;
+  box-shadow: 0 2px 8px rgba(244,67,54,0.09);
+  margin-top: 0.7rem;
+  margin-bottom: 0.2rem;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn.change-password-btn:hover {
+  background: linear-gradient(90deg, #c62828 60%, #ef6c00 100%);
+}
+
+#profile-update-status, #password-update-status {
+  font-size: 0.97rem;
+  color: #2196f3;
+  min-height: 20px;
+  margin-top: 0.15rem;
+}
+
+hr {
+  width: 100%;
+  border: none;
+  border-top: 1.5px solid #e3eaf1;
+  margin: 1.2rem 0 1.1rem 0;
+}
+
+@media (max-width: 600px) {
+  .profile-card {
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+    max-width: 100vw;
+  }
+  .profile-page {
+    padding: 10px 0;
+  }
+}
+/* --- End Modern Profile Page Styles --- */
+
 .about-page {
     max-width: 1200px;
     margin: 0 auto;
@@ -2217,21 +2392,59 @@ footer {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 0 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
+    padding: 0 2rem;
+    align-items: start;
 }
+
 
 .footer-section h3 {
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    font-size: 1.2rem;
+    letter-spacing: 0.2px;
+    justify-content: flex-start;
+    text-align: left;
 }
 
-.footer-section h3 i {
-    color: #3498db;
+.footer-section {
+    text-align: left;
 }
+
+.footer-section p,
+.footer-section ul,
+.footer-section ul li {
+    text-align: left;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+    .footer-section,
+    .footer-section h3,
+    .footer-section p,
+    .footer-section ul,
+    .footer-section ul li {
+        text-align: center !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+}
+
+
+
+.footer-section h3 i {
+    color: #4fc3f7;
+    font-size: 1.25em;
+    transition: color 0.3s;
+}
+.footer-section h3 i:hover {
+    color: #00bcd4;
+}
+
 
 .footer-section ul {
     list-style: none;
@@ -2245,24 +2458,54 @@ footer {
 }
 
 .footer-section a {
-    color: white;
+    color: #e0eaf6;
+    text-decoration: none;
+    transition: color 0.3s;
+    font-weight: 500;
+}
+
+
+.footer-section a:hover {
+    color: #00bcd4;
+    text-decoration: underline;
+}
+
+
+.footer-bottom {
+    text-align: center;
+    padding: 1.3rem 0 1.1rem 0;
+    margin-top: 2.2rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.footer-bottom p {
+    margin-bottom: 0.5rem;
+}
+
+.footer-bottom a {
+    color: #e0eaf6;
     text-decoration: none;
     transition: color 0.3s;
 }
 
-.footer-section a:hover {
-    color: #3498db;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding: 1rem;
-    margin-top: 2rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    font-size: 0.9rem;
+.footer-bottom a:hover {
+    color: #00bcd4;
 }
 
 /* Responsive Adjustments */
+@media (max-width: 900px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    .footer-section h3 {
+        justify-content: center;
+    }
+}
+
 @media (max-width: 768px) {
     .hero-content h1 {
         font-size: 2rem;
@@ -2284,13 +2527,16 @@ footer {
         left: -30px;
         width: 30px;
         height: 30px;
-        font-size: 1rem;
     }
     
     .team-card {
         width: 100%;
     }
+    .footer-content {
+        padding: 0 0.5rem;
+    }
 }
+
 
 /* Contact Page Styles */
 .contact-page {

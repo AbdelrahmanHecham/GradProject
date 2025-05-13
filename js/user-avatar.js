@@ -68,45 +68,52 @@
       setTheme(current === 'dark' ? 'light' : 'dark');
     };
 
-    // Get initials
-    let username = localStorage.getItem('username') || '';
-    let initials = '?';
-    if (username) {
-      let parts = username.split(' ');
-      let first = parts[0]?.charAt(0).toUpperCase() || '';
-      let last = parts[1]?.charAt(0).toUpperCase() || '';
-      initials = first + (last || '');
+    // Render avatar (image or initials)
+    function renderAvatar() {
+      let avatarUrl = localStorage.getItem('avatar');
+      if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
+        avatar.innerHTML = `<img src="${avatarUrl}" alt="User Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+      } else {
+        let username = localStorage.getItem('username') || '';
+        let initials = '?';
+        if (username) {
+          let parts = username.split(' ');
+          let first = parts[0]?.charAt(0).toUpperCase() || '';
+          let last = parts[1]?.charAt(0).toUpperCase() || '';
+          initials = first + (last || '');
+        }
+        avatar.textContent = initials;
+      }
     }
-    avatar.textContent = initials;
+    renderAvatar();
+    // Listen for avatar changes
+    window.addEventListener('avatarChanged', renderAvatar);
 
     // Modal for editing address
     avatar.onclick = function(e) {
       e.stopPropagation();
-      let dropdown = document.getElementById('avatar-dropdown');
-      if (dropdown) {
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        return;
-      }
-      dropdown = document.createElement('div');
-      dropdown.id = 'avatar-dropdown';
-      dropdown.style.position = 'absolute';
-      dropdown.style.top = '52px';
-      dropdown.style.right = '0';
-      dropdown.style.background = '#fff';
-      dropdown.style.border = '1px solid #ddd';
-      dropdown.style.borderRadius = '8px';
+      window.location.href = 'profile.html';
+      return;
       dropdown.style.boxShadow = '0 2px 12px rgba(0,0,0,0.13)';
       dropdown.style.padding = '0.5rem 0';
       dropdown.style.zIndex = '1003';
       dropdown.style.minWidth = '160px';
-      dropdown.innerHTML = `
-        <button id="profile-btn" style="background:none;border:none;width:100%;text-align:left;padding:0.7rem 1.2rem;font-size:1rem;cursor:pointer;color:#00bcd4;">My Profile</button>
-        <button id="logout-btn" style="background:none;border:none;width:100%;text-align:left;padding:0.7rem 1.2rem;font-size:1rem;cursor:pointer;color:#f44336;">Logout</button>
-      `;
-      avatar.parentNode.style.position = 'relative';
-      avatar.parentNode.appendChild(dropdown);
-      
-      document.getElementById('profile-btn').onclick = function(ev) {
+      const profileBtn = document.createElement('button');
+      profileBtn.id = 'profile-btn';
+      profileBtn.textContent = 'My Profile';
+      profileBtn.style.display = 'block';
+      profileBtn.style.width = '100%';
+      profileBtn.style.background = 'inherit';
+      profileBtn.style.color = 'inherit';
+      profileBtn.style.border = 'none';
+      profileBtn.style.padding = '0.8rem 1.2rem';
+      profileBtn.style.textAlign = 'left';
+      profileBtn.style.cursor = 'pointer';
+      profileBtn.style.fontSize = '1rem';
+      profileBtn.style.borderRadius = '8px 8px 0 0';
+      profileBtn.onmouseover = function() { this.style.background = '#f1f6fa'; };
+      profileBtn.onmouseout = function() { this.style.background = 'inherit'; };
+      profileBtn.onclick = function(ev) {
         ev.stopPropagation();
         dropdown.style.display = 'none';
         let modal = document.getElementById('profile-modal');

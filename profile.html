@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SmartPC Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="recommendations.html"><i class="fas fa-list-ul"></i> Recommendations</a>
+        <a href="troubleshooting.html"><i class="fas fa-tools"></i> Troubleshooting</a>
+        <a href="learn.html"><i class="fas fa-graduation-cap"></i> Learn</a>
+        <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+        <a href="profile.html" class="active"><i class="fas fa-user"></i> My Profile</a>
+      </nav>
+    </header>
+    <main class="profile-page">
+        <div class="profile-card">
+            <h2>Your Profile</h2>
+            <div class="avatar-section">
+                <img id="profile-avatar" src="images/default-avatar.png" alt="Avatar" class="profile-avatar">
+                <input type="file" id="avatar-upload" accept="image/*" style="display:none">
+                <button id="change-avatar-btn" type="button">Change Avatar</button>
+                <div id="avatar-upload-status"></div>
+            </div>
+            <form id="profile-form">
+                <label>First Name</label>
+                <input type="text" id="firstName" required>
+                <label>Last Name</label>
+                <input type="text" id="lastName" required>
+                <label>Address</label>
+                <input type="text" id="address">
+                <button type="submit" class="btn save-btn">Save Profile</button>
+                <div id="profile-update-status"></div>
+            </form>
+            <hr>
+            <form id="password-form">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" required>
+                <label>New Password</label>
+                <input type="password" id="newPassword" required>
+                <button type="submit" class="btn change-password-btn">Change Password</button>
+                <div id="password-update-status"></div>
+            </form>
+        </div>
+    </main>
+    <script src="js/profile.js"></script>
+</body>
+</html>

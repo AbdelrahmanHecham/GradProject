@@ -29,6 +29,7 @@ db.serialize(() => {
       address   TEXT,
       email     TEXT    UNIQUE NOT NULL,
       password  TEXT    NOT NULL,
+      avatar    TEXT,
       created   DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -40,6 +41,19 @@ db.serialize(() => {
       userId   INTEGER NOT NULL,
       build    TEXT    NOT NULL,
       savedAt  DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(userId) REFERENCES users(id)
+    )
+  `);
+
+  // Public builds table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS public_builds (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId      INTEGER NOT NULL,
+      build       TEXT    NOT NULL,
+      title       TEXT,
+      description TEXT,
+      publishedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY(userId) REFERENCES users(id)
     )
   `);
@@ -406,6 +420,107 @@ app.get('/api/component-price', (req, res) => {
     console.error('Component price API error:', err.message);
     res.status(500).json({ message: 'Internal server error.' });
   }
+});
+
+// ─── Public Builds API ─────────────────────────────────────────────────────────
+// Publish a build to the public gallery
+app.post('/api/public-builds', requireAuth, (req, res) => {
+  const { build, title, description } = req.body;
+  const userId = req.session.userId;
+  if (!build) {
+    return res.status(400).json({ message: 'Build is required.' });
+  }
+  const buildStr = JSON.stringify(build);
+  db.run(
+    `INSERT INTO public_builds (userId, build, title, description) VALUES (?, ?, ?, ?)`,
+    [userId, buildStr, title || '', description || ''],
+    function(err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Database error.' });
+      }
+      res.status(201).json({ id: this.lastID, message: 'Build published to gallery!' });
+    }
+  );
+});
+
+// List all public builds
+app.get('/api/public-builds', (req, res) => {
+  db.all(
+    `SELECT public_builds.*, users.username FROM public_builds JOIN users ON public_builds.userId = users.id ORDER BY publishedAt DESC`,
+    [],
+    (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Database error.' });
+      }
+      const builds = rows.map(r => ({
+        id: r.id,
+        userId: r.userId,
+        username: r.username,
+        build: JSON.parse(r.build),
+        title: r.title,
+        description: r.description,
+        publishedAt: r.publishedAt
+      }));
+      res.json({ builds });
+    }
+  );
+});
+
+// ─── Profile API ─────────────────────────────────────────────────────────────--
+const multer = require('multer');
+const upload = multer({ dest: path.join(__dirname, 'images', 'avatars') });
+
+// Get current user profile
+app.get('/api/profile', requireAuth, (req, res) => {
+  db.get('SELECT firstName, lastName, address, email, avatar FROM users WHERE id = ?', [req.session.userId], (err, row) => {
+    if (err) return res.status(500).json({ message: 'Database error.' });
+    if (!row) return res.status(404).json({ message: 'User not found.' });
+    res.json(row);
+  });
+});
+
+// Update profile info (firstName, lastName, address, avatar)
+app.put('/api/profile', requireAuth, (req, res) => {
+  const { firstName, lastName, address, avatar } = req.body;
+  db.run(
+    'UPDATE users SET firstName = ?, lastName = ?, address = ?, avatar = ? WHERE id = ?',
+    [firstName, lastName, address, avatar, req.session.userId],
+    function(err) {
+      if (err) return res.status(500).json({ message: 'Database error.' });
+      if (this.changes === 0) return res.status(404).json({ message: 'User not found.' });
+      res.json({ message: 'Profile updated.' });
+    }
+  );
+});
+
+// Upload avatar image
+app.post('/api/profile/avatar', requireAuth, upload.single('avatar'), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'No file uploaded.' });
+  // Save file path relative to /images/avatars
+  const avatarPath = `images/avatars/${req.file.filename}`;
+  db.run('UPDATE users SET avatar = ? WHERE id = ?', [avatarPath, req.session.userId], function(err) {
+    if (err) return res.status(500).json({ message: 'Database error.' });
+    res.json({ avatar: avatarPath });
+  });
+});
+
+// Change password
+app.put('/api/profile/password', requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) return res.status(400).json({ message: 'Both current and new password are required.' });
+  db.get('SELECT password FROM users WHERE id = ?', [req.session.userId], async (err, row) => {
+    if (err) return res.status(500).json({ message: 'Database error.' });
+    if (!row) return res.status(404).json({ message: 'User not found.' });
+    const match = await bcrypt.compare(currentPassword, row.password);
+    if (!match) return res.status(401).json({ message: 'Current password is incorrect.' });
+    const hash = await bcrypt.hash(newPassword, 10);
+    db.run('UPDATE users SET password = ? WHERE id = ?', [hash, req.session.userId], function(err) {
+      if (err) return res.status(500).json({ message: 'Database error.' });
+      res.json({ message: 'Password updated.' });
+    });
+  });
 });
 
 // ─── Protect Static HTML Pages ─────────────────────────────────────────────────

@@ -55,14 +55,99 @@ const problemOptions = [
 
 let currentStep = null; // null means not in troubleshooting flow
 
-function chatbotSend(msg, fromBot = false) {
+function chatbotSend(msg, fromBot = false, suggestions = null) {
   const chat = document.getElementById('chatbot-messages');
   const msgDiv = document.createElement('div');
-  msgDiv.className = fromBot ? 'chatbot-msg bot' : 'chatbot-msg user';
+  msgDiv.className = (fromBot ? 'chatbot-msg bot' : 'chatbot-msg user') + ' chatbot-fadein';
   msgDiv.textContent = msg;
   chat.appendChild(msgDiv);
+
+  // Add smart suggestions (quick replies)
+  if (fromBot && suggestions && Array.isArray(suggestions) && suggestions.length) {
+    const suggDiv = document.createElement('div');
+    suggDiv.className = 'chatbot-suggestions chatbot-fadein';
+    suggestions.forEach(sugg => {
+      const btn = document.createElement('button');
+      btn.className = 'chatbot-suggestion-btn chatbot-fadein';
+      // Add icon for common suggestions
+      if (/component|price/i.test(sugg)) {
+        btn.innerHTML = '<i class="fas fa-microchip" style="margin-right:0.5em;"></i>' + sugg;
+      } else if (/problem|troubleshoot/i.test(sugg)) {
+        btn.innerHTML = '<i class="fas fa-tools" style="margin-right:0.5em;"></i>' + sugg;
+      } else if (/support|contact/i.test(sugg)) {
+        btn.innerHTML = '<i class="fas fa-headset" style="margin-right:0.5em;"></i>' + sugg;
+      } else {
+        btn.textContent = sugg;
+      }
+      btn.onclick = () => {
+        chatbotSend(sugg);
+        document.getElementById('chatbot-input').value = sugg;
+        document.getElementById('chatbot-form').dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
+      };
+      suggDiv.appendChild(btn);
+    });
+    chat.appendChild(suggDiv);
+  }
+
+  chat.scrollTop = chat.scrollHeight;
+  // Save to chat history
+  saveChatHistory();
+}
+
+
+
+// Typing indicator logic
+function showTypingIndicator() {
+  const chat = document.getElementById('chatbot-messages');
+  let typingDiv = document.getElementById('chatbot-typing');
+  if (!typingDiv) {
+    typingDiv = document.createElement('div');
+    typingDiv.id = 'chatbot-typing';
+    typingDiv.className = 'chatbot-msg bot';
+    typingDiv.textContent = 'Bot is typing...';
+    chat.appendChild(typingDiv);
+  }
   chat.scrollTop = chat.scrollHeight;
 }
+function hideTypingIndicator() {
+  const typingDiv = document.getElementById('chatbot-typing');
+  if (typingDiv && typingDiv.parentNode) {
+    typingDiv.parentNode.removeChild(typingDiv);
+  }
+}
+
+// Chat history persistence
+function saveChatHistory() {
+  const chat = document.getElementById('chatbot-messages');
+  const msgs = Array.from(chat.children).map(div => ({
+    className: div.className,
+    text: div.textContent
+  }));
+  localStorage.setItem('chatbotHistory', JSON.stringify(msgs));
+}
+function clearChatHistory() {
+  localStorage.removeItem('chatbotHistory');
+  const chat = document.getElementById('chatbot-messages');
+  if (chat) chat.innerHTML = '';
+}
+
+function restoreChatHistory(reset = false) {
+  const chat = document.getElementById('chatbot-messages');
+  chat.innerHTML = '';
+  if (reset) return;
+  try {
+    const msgs = JSON.parse(localStorage.getItem('chatbotHistory')) || [];
+    msgs.forEach(m => {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = m.className;
+      msgDiv.textContent = m.text;
+      chat.appendChild(msgDiv);
+    });
+    chat.scrollTop = chat.scrollHeight;
+  } catch {}
+}
+
+
 
 function chatbotAsk(stepIdx) {
   const step = troubleshootingTree[stepIdx];
@@ -98,9 +183,17 @@ function chatbotHandleInput(input) {
       .then(res => res.json())
       .then(data => {
         if (data && data.price) {
-          chatbotSend(`The price of ${query.toUpperCase()} is $${data.price}.`, true);
+          chatbotSend(`The price of ${query.toUpperCase()} is $${data.price}.`, true, [
+            'Ask about another component',
+            'Troubleshoot a problem',
+            'Contact support'
+          ]);
         } else {
-          chatbotSend(`Sorry, I couldn't find the price for ${query}.`, true);
+          chatbotSend(`Sorry, I couldn't find the price for ${query}.`, true, [
+            'Try another component',
+            'Troubleshoot a problem',
+            'Contact support'
+          ]);
         }
       })
       .catch(() => chatbotSend('Error fetching price.', true));
@@ -110,12 +203,38 @@ function chatbotHandleInput(input) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Add clear chat button to header
+  const header = document.getElementById('chatbot-header');
+  if (header && !document.getElementById('chatbot-clear')) {
+    const clearBtn = document.createElement('button');
+    clearBtn.id = 'chatbot-clear';
+    clearBtn.title = 'Clear Chat';
+    clearBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    clearBtn.style.background = 'none';
+    clearBtn.style.border = 'none';
+    clearBtn.style.color = '#fff';
+    clearBtn.style.fontSize = '1.1rem';
+    clearBtn.style.cursor = 'pointer';
+    clearBtn.style.marginLeft = '0.7rem';
+    header.appendChild(clearBtn);
+    clearBtn.onclick = () => {
+      clearChatHistory();
+      restoreChatHistory(true);
+      if (typeof showInitialOptions === 'function') showInitialOptions();
+    };
+  }
+
   const form = document.getElementById('chatbot-form');
   const input = document.getElementById('chatbot-input');
   const btns = document.getElementById('chatbot-buttons');
   const widget = document.getElementById('chatbot-widget');
   const toggle = document.getElementById('chatbot-toggle');
   const closeBtn = document.getElementById('chatbot-close');
+  let debounceTimeout = null;
+
+  // Restore chat history
+  restoreChatHistory();
+
   // Hide input by default
   form.style.display = 'none';
 
@@ -223,12 +342,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     btns.appendChild(btn);
   });
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     const val = input.value.trim();
     if (!val) return;
+    // Debounce input: disable for 1s
+    input.disabled = true;
+    setTimeout(() => { input.disabled = false; }, 1000);
     chatbotSend(val);
     input.value = '';
+    // Show typing indicator
+    showTypingIndicator();
+    // Simulate bot processing delay
+    await new Promise(res => setTimeout(res, 650));
+    hideTypingIndicator();
     // Handle price query
     if (chatbotHandleInput(val)) return;
     // If in troubleshooting flow, continue
